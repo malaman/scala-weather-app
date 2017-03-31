@@ -13,3 +13,7 @@ server.pid
 *.eml
 /dist/
 .cache
+run_app.sh
+# frontend ignores
+node_modules
+.DS_Store
