@@ -9,7 +9,7 @@ import ExecutionContext.Implicits.global
 import javax.inject.{Inject, Singleton}
 import scala.util.Properties
 
-
+@Singleton
 class CitiesAPIController @Inject() (ws: WSClient) extends Controller {
     val API_KEY = Properties.envOrElse("GOOGLE_API_KEY", "GOOGLE_API_KEY");
 

@@ -8,8 +8,10 @@ import scala.concurrent._
 import ExecutionContext.Implicits.global
 import javax.inject.{Inject, Singleton}
 import scala.util.Properties
+import play.api.libs.json._
 
-class WeatherController @Inject() (ws: WSClient) extends Controller {
+@Singleton
+class WeatherController @Inject() (ws: WSClient, citiesController: CitiesAPIController) extends Controller {
     val API_KEY = Properties.envOrElse("WEATHER_API_KEY", "WEATHER_API_KEY")
 
     def getWeather(city: String): Future[WSResponse] = {
@@ -19,8 +21,16 @@ class WeatherController @Inject() (ws: WSClient) extends Controller {
 
     def getWeatherForCity(city: String) = Action.async { request =>
         val city = request.getQueryString("city").mkString
-        getWeather(city).map { response =>
-            Ok(response.body)
+        val citiesFuture = citiesController.getCities(city);
+        citiesFuture.flatMap {
+            response => {
+                val predictions = Json.parse(response.body)
+                val googleAPICity: String = ((predictions \ "predictions")(0) \ "description").toString()
+                getWeather(googleAPICity).map { weatherResponse => {
+                        Ok(weatherResponse.body)
+                    }
+                }
+            }
         }
     }
 }
