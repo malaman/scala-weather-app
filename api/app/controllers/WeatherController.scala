@@ -9,6 +9,35 @@ import ExecutionContext.Implicits.global
 import javax.inject.{Inject, Singleton}
 import scala.util.Properties
 import play.api.libs.json._
+import scala.collection.mutable.ListBuffer
+
+
+
+case class GoogleCity (
+    description: String
+)
+
+object GoogleCity {
+    implicit val city = Json.format[GoogleCity]
+}
+
+case class APIWeather (
+    id: Int,
+    main: String,
+    description: String
+)
+
+object APIWeather {
+    implicit val weather = Json.format[APIWeather]
+}
+
+case class WeatherResponse (
+    weather: APIWeather
+)
+
+object WeatherResponse {
+    implicit val weather = Json.format[WeatherResponse]
+}
 
 @Singleton
 class WeatherController @Inject() (ws: WSClient, citiesController: CitiesAPIController) extends Controller {
@@ -19,17 +48,30 @@ class WeatherController @Inject() (ws: WSClient, citiesController: CitiesAPICont
         ws.url(url).get()
     }
 
-    def getWeatherForCity(city: String) = Action.async { request =>
+    def getWeatherForCity(city: String) = Action.async {request =>
         val city = request.getQueryString("city").mkString
         val citiesFuture = citiesController.getCities(city);
         citiesFuture.flatMap {
             response => {
-                val predictions = Json.parse(response.body)
-                val googleAPICity: String = ((predictions \ "predictions")(0) \ "description").toString()
-                getWeather(googleAPICity).map { weatherResponse => {
-                        Ok(weatherResponse.body)
-                    }
-                }
+                val resp = Json.parse(response.body)
+                val predictions = (resp \ "predictions")
+                val jsr = predictions.validate[Seq[GoogleCity]]
+                jsr.fold(
+                    errors => {
+                         Future(Ok("errors"))
+                    },
+                    cities => {
+                        val futures = cities.map { item =>
+                            getWeather(item.description)
+                        }
+                        val f = Future sequence futures
+                        f map {
+                            case results => {
+                                Ok((results.map { result => result.body}).mkString("[", ",", "]"))
+                            }
+                            case t => Ok("An error has occured: " + t)
+                        }
+                })
             }
         }
     }
