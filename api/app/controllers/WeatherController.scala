@@ -26,17 +26,30 @@ case class APIWeather (
     main: String,
     description: String
 )
-
 object APIWeather {
-    implicit val weather = Json.format[APIWeather]
+    implicit val w = Json.format[APIWeather]
+}
+
+case class WeatherInfo (
+    temp: Float,
+    pressure: Int,
+    humidity: Int,
+    temp_min: Float,
+    temp_max: Float
+)
+
+object WeatherInfo {
+    implicit val w = Json.format[WeatherInfo]
 }
 
 case class WeatherResponse (
-    weather: APIWeather
+    name: String,
+    weather: List[APIWeather],
+    main: WeatherInfo
 )
 
 object WeatherResponse {
-    implicit val weather = Json.format[WeatherResponse]
+    implicit val w = Json.format[WeatherResponse]
 }
 
 @Singleton
@@ -67,9 +80,21 @@ class WeatherController @Inject() (ws: WSClient, citiesController: CitiesAPICont
                         val f = Future sequence futures
                         f map {
                             case results => {
-                                Ok((results.map { result => result.body}).mkString("[", ",", "]"))
+                                var list = new ListBuffer[WeatherResponse]
+                                results.map { result => {
+                                    val resp = Json.parse(result.body)
+                                    println(resp)
+                                    val jsresp = (resp).validate[WeatherResponse]
+                                    jsresp.fold (
+                                        err => println(err),
+                                        weath => list += weath
+                                    )
+                                }
+                                }
+                                Ok(Json.arr(list.toList))
+                                // Ok((results.map { result => result.body}).mkString("[", ",", "]"))
                             }
-                            case t => Ok("An error has occured: " + t)
+                            case t => BadRequest("An error has occured: " + t)
                         }
                 })
             }
