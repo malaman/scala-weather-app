@@ -69,34 +69,34 @@ class WeatherController @Inject() (ws: WSClient, citiesController: CitiesAPICont
                 val resp = Json.parse(response.body)
                 val predictions = (resp \ "predictions")
                 val jsr = predictions.validate[Seq[GoogleCity]]
+                var futures: Seq[Future[WSResponse]] = Seq(ws.url("http://localhost").get())
                 jsr.fold(
                     errors => {
                          Future(Ok("errors"))
                     },
                     cities => {
-                        val futures = cities.map { item =>
+                        futures = cities.map { item =>
                             getWeather(item.description)
                         }
-                        val f = Future sequence futures
-                        f map {
-                            case results => {
-                                var list = new ListBuffer[WeatherResponse]
-                                results.map { result => {
-                                    val resp = Json.parse(result.body)
-                                    println(resp)
-                                    val jsresp = (resp).validate[WeatherResponse]
-                                    jsresp.fold (
-                                        err => println(err),
-                                        weath => list += weath
-                                    )
-                                }
-                                }
-                                Ok(Json.arr(list.toList))
-                                // Ok((results.map { result => result.body}).mkString("[", ",", "]"))
-                            }
-                            case t => BadRequest("An error has occured: " + t)
-                        }
                 })
+                val f = Future sequence futures
+                f map {
+                    case results => {
+                        var list = new ListBuffer[WeatherResponse]
+                        results.map { result => {
+                            val resp = Json.parse(result.body)
+                            val jsresp = (resp).validate[WeatherResponse]
+                            jsresp.fold (
+                                err => println(err),
+                                weath => list += weath
+                            )
+                        }
+                        }
+                        Ok(Json.arr(list.toList))
+                    }
+                    case t => BadRequest("An error has occured: " + t)
+                }
+
             }
         }
     }
