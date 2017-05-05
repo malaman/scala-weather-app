@@ -9,3 +9,4 @@ scalaVersion := "2.11.8"
 libraryDependencies += jdbc
 libraryDependencies += cache
 libraryDependencies += ws
+libraryDependencies += filters
