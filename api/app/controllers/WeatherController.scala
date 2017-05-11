@@ -10,32 +10,30 @@ import javax.inject.{Inject, Singleton}
 import scala.util.Properties
 import scala.collection.mutable.ListBuffer
 import models._
+import services.{CitiesService, WeatherService}
 
 @Singleton
-class WeatherController @Inject() (ws: WSClient, citiesController: CitiesAPIController) extends Controller {
-    val API_KEY = Properties.envOrElse("WEATHER_API_KEY", "WEATHER_API_KEY")
-
-    def getWeather(city: String): Future[WSResponse] = {
-        val url = s"http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}"
-        ws.url(url).get()
-    }
+class WeatherController @Inject() (
+    citiesService: CitiesService,
+    weatherService: WeatherService
+) extends Controller {
 
     def getWeatherForCity(city: String) = Action.async {request =>
         val city = request.getQueryString("city").mkString
-        val citiesFuture = citiesController.getCities(city);
+        val citiesFuture = citiesService.getCities(city);
         citiesFuture.flatMap {
             response => {
                 val resp = Json.parse(response.body)
                 val predictions = (resp \ "predictions")
+                var futures: Seq[Future[WSResponse]] = Seq.empty[Future[WSResponse]]
                 val jsr = predictions.validate[Seq[GoogleCity]]
-                var futures: Seq[Future[WSResponse]] = Seq(ws.url("http://localhost").get())
                 jsr.fold(
                     errors => {
                          Future(Ok("errors"))
                     },
                     cities => {
                         futures = cities.map { item =>
-                            getWeather(item.description)
+                            weatherService.getWeather(item.description)
                         }
                 })
                 val f = Future sequence futures
