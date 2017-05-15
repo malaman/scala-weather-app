@@ -28,28 +28,27 @@ class WeatherController @Inject() (
                 var futures: Seq[Future[WSResponse]] = Seq.empty[Future[WSResponse]]
                 val jsr = predictions.validate[Seq[GoogleCity]]
                 jsr.fold(
-                    errors => {
-                         Future(Ok("errors"))
-                    },
-                    cities => {
-                        futures = cities.map { item =>
-                            weatherService.getWeather(item.description)
-                        }
-                })
-                val f = Future sequence futures
+                  errors => Future(Ok("errors")),
+                  cities => {
+                    futures = cities.map { item =>
+                        weatherService.getWeather(s"${item.structured_formatting.main_text}, ${item.structured_formatting.secondary_text}")
+                    }
+                  }
+                )
+                val f = Future.sequence(futures)
                 f map {
-                    case results => {
-                        var list = new ListBuffer[WeatherResponse]
-                        results.map { result => {
-                            val resp = Json.parse(result.body)
-                            val jsresp = (resp).validate[WeatherResponse]
-                            jsresp.fold (
-                                err => println(err),
-                                weath => list += weath
-                            )
-                        }
-                        }
-                        Ok(Json.arr(list.toList))
+                  case results => {
+                    var list = new ListBuffer[WeatherResponse]
+                    results.map { result => {
+											val resp = Json.parse(result.body)
+                        val jsresp = (resp).validate[WeatherResponse]
+                        jsresp.fold (
+                            err => println(err),
+                            weath => list += weath
+                        )
+                    	}
+                    }
+                    Ok(Json.arr(list.toList))
                     }
                     case t => BadRequest("An error has occured: " + t)
                 }
