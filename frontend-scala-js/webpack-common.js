@@ -38,6 +38,7 @@ const config = (ctx) => ({
     entry: {
         main: [
             'bootstrap/dist/css/bootstrap.css',
+            'react-select/dist/react-select.css',
             sjs(ctx.sjs_mode),
         ],
     },
@@ -50,14 +51,14 @@ const config = (ctx) => ({
 
     plugins: [
         new Webpack.optimize.CommonsChunkPlugin({
+          name: 'vendor',
+          chunks: ['main'],
+          minChunks: (m) => /\/node_modules\//.test(m.resource),
+        }),
+        new Webpack.optimize.CommonsChunkPlugin({
             name: 'react',
             chunks: ['main'],
             minChunks: (m) => /\/node_modules\/react(?:-dom)?\//.test(m.resource),
-        }),
-        new Webpack.optimize.CommonsChunkPlugin({
-            name: 'vendor',
-            chunks: ['main'],
-            minChunks: (m) => /\/node_modules\//.test(m.resource),
         }),
         // new Webpack.optimize.CommonsChunkPlugin({
         //     name: 'manifest',

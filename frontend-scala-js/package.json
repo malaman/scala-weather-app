@@ -19,8 +19,10 @@
     "bootstrap": "3",
     "express": "^4.15.2",
     "google-map-react": "^0.24.0",
+    "lodash.throttle": "^4.1.1",
     "react": "^15.4.2",
-    "react-dom": "^15.4.2"
+    "react-dom": "^15.4.2",
+    "react-select": "^1.0.0-rc.4"
   },
   "scripts": {
     "start": "webpack-dev-server --config webpack-dev.js --devtool eval --progress --hot"
