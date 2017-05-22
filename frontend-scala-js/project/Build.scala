@@ -9,6 +9,7 @@ object Experiment {
     val MTest         = "0.4.5"
     val Microlibs     = "1.5"
     val Circe         = "0.7.0"
+    val Cats          = "0.9.0"
   }
 
   type PE = Project => Project
@@ -54,7 +55,12 @@ object Experiment {
         "com.github.japgolly.scalajs-react" %%% "core" % Ver.ScalaJsReact,
         "com.github.japgolly.scalajs-react" %%% "test" % Ver.ScalaJsReact % Test,
         "com.github.japgolly.microlibs" %%% "test-util" % Ver.Microlibs % Test,
-        "io.circe" %%% "circe-core" % Ver.Circe),
+        "org.typelevel" %% "cats" % Ver.Cats,
+        "io.circe" %%% "circe-core" % Ver.Circe,
+        "io.circe" %%% "circe-parser" % Ver.Circe,
+        "io.circe" %%% "circe-generic" % Ver.Circe,
+        "io.circe" %% "circe-optics" % Ver.Circe
+      ),
       scalaJSUseMainModuleInitializer := true,
       scalaJSUseMainModuleInitializer in Test := true, // Doesn't seem to work
       mainClass in Test := Some("demo.TestAssets"),

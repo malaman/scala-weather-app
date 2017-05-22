@@ -1,5 +1,8 @@
 package demo
 
+import scala.scalajs.js
+import js.JSConverters._
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.scalajs.js.Dynamic.{global => g}
 import scala.util.{Failure, Success}
@@ -7,8 +10,11 @@ import scalajs.js.annotation._
 
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
-import scala.scalajs.js
 import org.scalajs.dom
+import demo.models.{WeatherResponse}
+import io.circe.generic.auto._
+import io.circe.parser.decode
+
 
 object WeatherPage {
   @js.native
@@ -16,9 +22,18 @@ object WeatherPage {
   private object _throttle extends js.Any
   def throttle = _throttle.asInstanceOf[js.Dynamic]
 
+  // this.state = {
+  //   inputValue: '',
+  //   weatherData: [],
+  //   selectOptions: [],
+  //   isLoading: false
+  // };
+
   case class State(
-    var isLoaded: Boolean,
-    var inputValue: String
+    var isLoading: Boolean,
+    var inputValue: String,
+    var weatherData: Array[WeatherResponse],
+    var selectOptions: Array[Select.Options]
   )
 
   class Backend($: BackendScope[Unit, State]) {
@@ -26,19 +41,36 @@ object WeatherPage {
       // loadWeatherInfo("Berlin")
     }
 
+    def getSelectOptions(data: Array[WeatherResponse]) = {
+      data.zipWithIndex.map { case (item, index) => new Select.Options {
+        override val value = s"${item.name}: ${index}"
+        override val label = s"${item.name} ${item.weather(0).main} ${item.main.temp} °C"
+      }
+    }
+    }
+
     def loadWeatherInfo(city: String): Unit = {
+      $.modState(s => {
+        s.isLoading = true
+        s
+      }).runNow()
       dom.ext.Ajax.get(url=s"http://localhost:9000/weather?city=${city}")
           .onComplete {
               case Success(xhr) => {
-                  $.modState(s => {
-                    s.isLoaded = true
-                    s
-                  }).runNow()
+                val option = decode[Array[WeatherResponse]](xhr.responseText)
+                val weatherData = option match {
+                  case Left(failure) => Array.empty[WeatherResponse]
+                  case Right(data) => data
+                }
+                $.modState(s => {
+                  s.isLoading = false
+                  s.weatherData = weatherData
+                  s.selectOptions = getSelectOptions(weatherData)
+                  s
+                }).runNow()
               }
-              case Failure(xhr) => $.modState(s => {
-                s.isLoaded = false
-                s
-              }).runNow()
+              case Failure(xhr) => {
+              }
           }
     }
 
@@ -76,25 +108,31 @@ object WeatherPage {
       g.console.log(option)
     }
 
-    val select = Select.Component(
-      Select.props(
-        "form-field-name",
-        options,
-        "one",
-        onInputValueChange,
-        onSelectChange
-      )
-    )()
+    def render(s: State) = {
+      val select = Select.Component(
+        Select.props(
+          "form-field-name",
+          s.selectOptions.toJSArray,
+          "",
+          onInputValueChange,
+          onSelectChange,
+          pIsLoading = s.isLoading
+        )
+      )()
 
-    def render(s: State) =
       <.div(
-        <.div("is XHR loaded: ", s.isLoaded.toString),
         <.div(select)
       )
     }
+  }
 
     val Component = ScalaComponent.builder[Unit]("WeatherPage")
-      .initialState(State(isLoaded = false, inputValue = ""))
+      .initialState(State(
+        isLoading = false,
+        inputValue = "",
+        weatherData = Array.empty[WeatherResponse],
+        selectOptions = Array.empty[Select.Options]
+      ))
       .renderBackend[Backend]
       .componentDidMount(_.backend.start)
       .build

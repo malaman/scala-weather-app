@@ -1,5 +1,5 @@
 import React from 'react';
-import Rx from 'rxjs/Rx';
+import throttle from 'lodash.throttle';
 
 import Select from './Select/Select';
 
@@ -12,26 +12,24 @@ export default class App extends React.Component {
     super(props);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSelectionChange = this.handleSelectionChange.bind(this);
-    this.getWeatherData = this.getWeatherData.bind(this);
+    this.loadWeatherInfo = this.loadWeatherInfo.bind(this);
     this.state = {
       inputValue: '',
       weatherData: [],
       selectOptions: [],
       isLoading: false
     };
-    this.inputSubject = new Rx.Subject();
-    this.inputSubject.debounceTime(500)
-      .subscribe(this.getWeatherData);
+    this.throttleInput = throttle(this.throttleInputValueChange, 400);
   }
 
-  getWeatherData(city) {
+  loadWeatherInfo(city) {
     this.setState({ isLoading: true });
     fetch(`${host}/weather?city=${city}`)
       .then(resp => resp.json())
       .then(result => {
-        const selectOptions = result[0].map(item => {
+        const selectOptions = result.map((item, index) => {
           return {
-            value: item.name,
+            value: `${item.name}:${index}`,
             label: `${item.name} ${item.weather[0].main} ${item.main.temp.toFixed(1)} °C`
           }
         });
@@ -39,10 +37,17 @@ export default class App extends React.Component {
     });
   }
 
+  throttleInputValueChange() {
+    const { inputValue: city } = this.state;
+    this.loadWeatherInfo(city);
+  }
+
+
   handleInputChange(value) {
     this.setState({inputValue: value});
-    this.inputSubject.next(value);
+    this.throttleInput();
   }
+
   handleSelectionChange(obj) {
     this.setState({inputValue: obj ? obj.value : ''});
   }
@@ -50,7 +55,7 @@ export default class App extends React.Component {
   render() {
     return (
       <div className='app'>
-        <div>Please search for city to get the weather: </div>
+        <div>Search for city to get the weather: </div>
         <br />
         <Select
           value={this.state.inputValue}

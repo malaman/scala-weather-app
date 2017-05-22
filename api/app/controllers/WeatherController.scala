@@ -48,7 +48,7 @@ class WeatherController @Inject() (
                         )
                     	}
                     }
-                    Ok(Json.arr(list.toList))
+                    Ok(Json.toJson(list.toList))
                     }
                     case t => BadRequest("An error has occured: " + t)
                 }

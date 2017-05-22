@@ -15,8 +15,7 @@ object DemoPage {
     val map = GoogleMap.Component(GoogleMap.props(137.0537453, -35.8177544, 9))()
     <.div(
       ^.paddingLeft := 1.em,
-      <.h3("Enter city to get weather: "),
-      <.div(Timer.Component()),
+      <.h3("Enter city to get weather: "),      
       <.div(WeatherPage.Component())
     )
   }
