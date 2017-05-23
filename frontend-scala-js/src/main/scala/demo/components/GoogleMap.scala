@@ -1,4 +1,4 @@
-package demo
+package demo.components
 
 import scalajs.js
 import scalajs.js.annotation._

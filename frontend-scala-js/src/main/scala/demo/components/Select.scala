@@ -1,11 +1,10 @@
-package demo
+package demo.components
 
 import scalajs.js
 import scalajs.js.annotation._
 import japgolly.scalajs.react._
 
 object Select {
-
   @JSImport("react-select", JSImport.Default)
   @js.native
   object JsComp extends js.Any

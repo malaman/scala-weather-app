@@ -1,4 +1,4 @@
-package demo
+package demo.components
 
 import scalajs.js
 import scalajs.js.annotation._
@@ -15,7 +15,7 @@ object DemoPage {
     val map = GoogleMap.Component(GoogleMap.props(137.0537453, -35.8177544, 9))()
     <.div(
       ^.paddingLeft := 1.em,
-      <.h3("Enter city to get weather: "),      
+      <.h3("Enter city to get weather: "),
       <.div(WeatherPage.Component())
     )
   }

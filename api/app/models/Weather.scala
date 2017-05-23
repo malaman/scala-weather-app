@@ -2,33 +2,75 @@ package models
 
 import play.api.libs.json._
 
-case class APIWeather (
-    id: Int,
-    main: String,
-    description: String
+case class Coord (
+  lon: Float,
+  lat: Float
 )
-object APIWeather {
-    implicit val w = Json.format[APIWeather]
+
+object Coord {
+  implicit val v = Json.format[Coord]
 }
 
-case class WeatherInfo (
-    temp: Float,
-    pressure: Int,
-    humidity: Int,
-    temp_min: Float,
-    temp_max: Float
+case class Weather (
+  id: Int,
+  main: String,
+  description: String
 )
 
-object WeatherInfo {
-    implicit val w = Json.format[WeatherInfo]
+object Weather {
+  implicit val v = Json.format[Weather]
+}
+
+case class Main (
+  temp: Float,
+  pressure: Int,
+  humidity: Int,
+  temp_min: Float,
+  temp_max: Float
+)
+
+object Main {
+  implicit val v = Json.format[Main]
+}
+
+case class Wind (
+  speed: Float,
+  deg: Int
+)
+
+object Wind {
+  implicit val v = Json.format[Wind]
+}
+
+case class Clouds (
+  all: Int
+)
+
+object Clouds {
+  implicit val v = Json.format[Clouds]
+}
+
+case class Sys (
+  country: String,
+  sunrise: Int,
+  sunset: Int
+)
+
+object Sys {
+  implicit val v = Json.format[Sys]
 }
 
 case class WeatherResponse (
-    name: String,
-    weather: List[APIWeather],
-    main: WeatherInfo
+  coord: Coord,
+  weather: Array[Weather],
+  main: Main,
+  visibility: Int,
+  wind: Wind,
+  clouds: Clouds,
+  sys: Sys,
+  name: String
 )
 
 object WeatherResponse {
-    implicit val w = Json.format[WeatherResponse]
+  implicit val v = Json.format[WeatherResponse]
 }

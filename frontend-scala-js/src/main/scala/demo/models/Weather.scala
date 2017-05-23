@@ -1,12 +1,17 @@
 package demo.models
 
-case class APIWeather (
+case class Coord (
+  lon: Float,
+  lat: Float
+)
+
+case class Weather (
   id: Int,
   main: String,
   description: String
 )
 
-case class WeatherInfo (
+case class Main (
   temp: Float,
   pressure: Int,
   humidity: Int,
@@ -14,8 +19,28 @@ case class WeatherInfo (
   temp_max: Float
 )
 
+case class Wind (
+  speed: Float,
+  deg: Int
+)
+
+case class Clouds (
+  all: Int
+)
+
+case class Sys (
+  country: String,
+  sunrise: Int,
+  sunset: Int
+)
+
 case class WeatherResponse (
-  name: String,
-  weather: Array[APIWeather],
-  main: WeatherInfo
+  coord: Coord,
+  weather: Array[Weather],
+  main: Main,
+  visibility: Int,
+  wind: Wind,
+  clouds: Clouds,
+  sys: Sys,
+  name: String
 )

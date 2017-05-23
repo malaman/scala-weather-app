@@ -1,4 +1,4 @@
-package demo
+package demo.components
 
 import scala.scalajs.js
 import js.JSConverters._
@@ -15,19 +15,11 @@ import demo.models.{WeatherResponse}
 import io.circe.generic.auto._
 import io.circe.parser.decode
 
-
 object WeatherPage {
   @js.native
   @JSImport("lodash.throttle", JSImport.Default)
   private object _throttle extends js.Any
   def throttle = _throttle.asInstanceOf[js.Dynamic]
-
-  // this.state = {
-  //   inputValue: '',
-  //   weatherData: [],
-  //   selectOptions: [],
-  //   isLoading: false
-  // };
 
   case class State(
     var isLoading: Boolean,
@@ -37,16 +29,12 @@ object WeatherPage {
   )
 
   class Backend($: BackendScope[Unit, State]) {
-    def start = Callback {
-      // loadWeatherInfo("Berlin")
-    }
-
-    def getSelectOptions(data: Array[WeatherResponse]) = {
+    def getSelectOptions(data: Array[WeatherResponse], intputValue: String) = {
       data.zipWithIndex.map { case (item, index) => new Select.Options {
-        override val value = s"${item.name}: ${index}"
-        override val label = s"${item.name} ${item.weather(0).main} ${item.main.temp} °C"
+        override val value = s"${intputValue} ${item.name}: ${index}"
+        override val label = s"${item.name}, ${item.sys.country} ${item.weather(0).main} ${(math rint item.main.temp * 10) / 10} °C"
       }
-    }
+      }
     }
 
     def loadWeatherInfo(city: String): Unit = {
@@ -65,7 +53,7 @@ object WeatherPage {
                 $.modState(s => {
                   s.isLoading = false
                   s.weatherData = weatherData
-                  s.selectOptions = getSelectOptions(weatherData)
+                  s.selectOptions = getSelectOptions(weatherData, s.inputValue)
                   s
                 }).runNow()
               }
@@ -73,17 +61,6 @@ object WeatherPage {
               }
           }
     }
-
-    val options = js.Array(
-      new Select.Options {
-        override val value = "one"
-        override val label = "Label one"
-      },
-      new Select.Options {
-        override val value = "two"
-        override val label = "Label two"
-      }
-    )
 
     def throttleInputValueChange(): js.Dynamic = {
       throttle(() => {
@@ -121,6 +98,11 @@ object WeatherPage {
       )()
 
       <.div(
+        ^.className := "weather-page",
+        <.div(
+          ^.className := "weather-page__label",
+          "Enter city to get weather: "
+        ),
         <.div(select)
       )
     }
@@ -134,6 +116,5 @@ object WeatherPage {
         selectOptions = Array.empty[Select.Options]
       ))
       .renderBackend[Backend]
-      .componentDidMount(_.backend.start)
       .build
 }

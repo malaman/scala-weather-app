@@ -20,11 +20,15 @@
     "express": "^4.15.2",
     "google-map-react": "^0.24.0",
     "lodash.throttle": "^4.1.1",
+    "node-sass": "^4.5.3",
+    "open-browser-webpack-plugin": "^0.0.5",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
-    "react-select": "^1.0.0-rc.4"
+    "react-select": "^1.0.0-rc.4",
+    "resolve-url-loader": "^2.0.2",
+    "sass-loader": "^6.0.5"
   },
   "scripts": {
-    "start": "webpack-dev-server --config webpack-dev.js --devtool eval --progress --hot"
+    "start": "webpack-dev-server --config webpack.config.js --devtool eval --progress --hot"
   }
 }
