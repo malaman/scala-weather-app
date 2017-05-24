@@ -31,7 +31,7 @@ object WeatherPage {
   class Backend($: BackendScope[Unit, State]) {
     def getSelectOptions(data: Array[WeatherResponse], intputValue: String) = {
       data.zipWithIndex.map { case (item, index) => new Select.Options {
-        override val value = s"${intputValue} ${item.name}: ${index}"
+        override val value = s"${intputValue}::${index}"
         override val label = s"${item.name}, ${item.sys.country} ${item.weather(0).main} ${(math rint item.main.temp * 10) / 10} °C"
       }
       }
@@ -81,8 +81,16 @@ object WeatherPage {
       }.runNow()
     }
 
-    def onSelectChange(option: Select.Options) {
-      g.console.log(option)
+    def onSelectChange(option: Select.Options) = {
+      var selectedValue = try {
+        Some(option.value);
+      } catch {
+        case e: Exception => None : Option[String]
+      }
+      $.modState(s => {
+        s.inputValue = selectedValue.getOrElse("")
+        s
+      }).runNow()
     }
 
     def render(s: State) = {
@@ -90,20 +98,28 @@ object WeatherPage {
         Select.props(
           "form-field-name",
           s.selectOptions.toJSArray,
-          "",
+          s.inputValue,
           onInputValueChange,
           onSelectChange,
           pIsLoading = s.isLoading
         )
       )()
-
+      val tableProps = try {
+        val arr = s.inputValue.split("::")
+        val index = if (arr.length == 2) arr(1).toInt else -1
+        if (index == -1) None else Some(s.weatherData(index))
+      } catch {
+        case e: Exception => None
+      }
+      g.console.log(tableProps.toString)
       <.div(
         ^.className := "weather-page",
         <.div(
           ^.className := "weather-page__label",
           "Enter city to get weather: "
         ),
-        <.div(select)
+        <.div(select),
+        <.div(WeatherBox.Component(tableProps))
       )
     }
   }
