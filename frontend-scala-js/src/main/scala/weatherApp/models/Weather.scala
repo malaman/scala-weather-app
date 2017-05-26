@@ -1,4 +1,4 @@
-package demo.models
+package weatherApp.models
 
 case class Coord (
   lon: Float,

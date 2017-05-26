@@ -1,4 +1,4 @@
-package demo.components
+package weatherApp.components
 
 import scala.scalajs.js
 import js.JSConverters._
@@ -11,7 +11,7 @@ import scalajs.js.annotation._
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
 import org.scalajs.dom
-import demo.models.{WeatherResponse}
+import weatherApp.models.{WeatherResponse}
 import io.circe.generic.auto._
 import io.circe.parser.decode
 
@@ -112,12 +112,17 @@ object WeatherPage {
         case e: Exception => None
       }
       <.div(
+        ^.width := 1000.px,
+        ^.margin := "0 auto",
         ^.className := "weather-page",
         <.div(
           ^.className := "weather-page__label",
           "Enter city to get weather: "
         ),
-        <.div(select),
+        <.div(
+            ^.marginBottom := 10.px,
+            select
+        ),
         <.div(WeatherBox.Component(tableProps))
       )
     }

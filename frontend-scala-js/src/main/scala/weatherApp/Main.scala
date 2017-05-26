@@ -1,11 +1,11 @@
-package demo
+package weatherApp
 
 import org.scalajs.dom
 import scala.scalajs.js.{JSApp}
 import scalajs.js
 import scalajs.js.annotation._
 import japgolly.scalajs.react.WebpackRequire
-import demo.components.{WeatherPage}
+import weatherApp.components.{WeatherPage}
 
 object Main extends JSApp {
   @JSImport("../../assets/scss/main.scss", JSImport.Namespace)

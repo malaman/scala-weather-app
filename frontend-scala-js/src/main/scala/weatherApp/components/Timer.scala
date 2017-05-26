@@ -1,4 +1,4 @@
-package demo.components
+package weatherApp.components
 
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._

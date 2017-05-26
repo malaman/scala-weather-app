@@ -1,4 +1,4 @@
-package demo.components
+package weatherApp.components
 
 import scalajs.js
 import scalajs.js.annotation._
@@ -6,7 +6,7 @@ import scala.scalajs.js.Dynamic.{global => g}
 
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
-import demo.models.{WeatherResponse}
+import weatherApp.models.{WeatherResponse}
 
 
 object WeatherBox {
@@ -14,9 +14,14 @@ object WeatherBox {
     .render($ => {
       if ($.props.isDefined) {
         val props = $.props.get
-        <.div("hi: ", props.name)
+        <.div(
+            ^.width := "25%",
+            ^.display := "flex",
+            ^.border := "1px solid",
+            "hi: ", props.name
+        )
       } else {
-        <.div("Nothing is selected")
+        <.div()
       }
     })
     .build

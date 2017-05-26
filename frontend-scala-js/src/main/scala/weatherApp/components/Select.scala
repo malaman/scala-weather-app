@@ -1,4 +1,4 @@
-package demo.components
+package weatherApp.components
 
 import scalajs.js
 import scalajs.js.annotation._
@@ -8,6 +8,12 @@ object Select {
   @JSImport("react-select", JSImport.Default)
   @js.native
   object JsComp extends js.Any
+
+  @JSImport("react-select/dist/react-select.css", JSImport.Namespace)
+  @js.native
+  object CSS extends js.Any
+  CSS
+
 
 
   @ScalaJSDefined

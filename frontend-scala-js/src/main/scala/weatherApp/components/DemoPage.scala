@@ -1,4 +1,4 @@
-package demo.components
+package weatherApp.components
 
 import scalajs.js
 import scalajs.js.annotation._

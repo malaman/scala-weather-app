@@ -22,7 +22,29 @@ module.exports = {
     loaders: [
       {
         test: /\.scss$/,
-        use: ['style-loader', 'css-loader', 'resolve-url-loader', 'sass-loader?sourceMap']
+        use: [
+            'style-loader',
+            'css-loader',
+            'resolve-url-loader',
+            'sass-loader?sourceMap'
+          ]
+      },
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: "style-loader"
+          },
+          {
+            loader: "css-loader",
+            options: {
+              includePaths: [
+                path.resolve('./node_modules/react-select/dist/react-select.css'),
+                path.resolve('./node_modules/weather-icons/css/weather-icons.min.css')
+              ]
+            }
+          }
+        ]
       }
     ]
   },
