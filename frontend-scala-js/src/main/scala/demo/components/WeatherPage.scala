@@ -111,7 +111,6 @@ object WeatherPage {
       } catch {
         case e: Exception => None
       }
-      g.console.log(tableProps.toString)
       <.div(
         ^.className := "weather-page",
         <.div(

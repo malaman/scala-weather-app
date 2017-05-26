@@ -11,7 +11,7 @@ module.exports = {
     port: 8080,
   },
   entry: [
-    path.resolve(__dirname, 'target/scala-2.12/demo-fastopt.js')
+    path.resolve(__dirname, 'target/scala-2.12/weather-app-fastopt.js')
   ],
   output: {
     path: path.resolve(__dirname, 'build'),
