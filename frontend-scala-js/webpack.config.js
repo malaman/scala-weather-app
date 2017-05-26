@@ -45,7 +45,21 @@ module.exports = {
             }
           }
         ]
+      },
+      {
+        test   : /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9=&.]+)?$/,
+        use : [
+          {
+            loader: 'file-loader',
+            options: {
+              includePaths: [
+                path.resolve('./node_modules/weather-icons/font')
+              ]
+            }
+          }
+        ]
       }
+
     ]
   },
   resolve: {

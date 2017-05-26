@@ -89,6 +89,9 @@ object WeatherPage {
       }
       $.modState(s => {
         s.inputValue = selectedValue.getOrElse("")
+        if (s.inputValue == "") {
+          s.selectOptions = Array.empty[Select.Options]
+        }
         s
       }).runNow()
     }
