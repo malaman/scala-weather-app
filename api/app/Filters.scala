@@ -31,7 +31,7 @@ class Filters @Inject() (
     // Use the example filter if we're running development mode. If
     // we're running in production or test mode then don't use any
     // filters at all.
-    if (env.mode == Mode.Dev) Seq(exampleFilter, corsFilter) else Seq.empty
+    if (env.mode == Mode.Dev) Seq(exampleFilter, corsFilter) else Seq(corsFilter)
   }
 
 }

@@ -1,15 +1,9 @@
 const webpack = require('webpack');
 const path = require('path');
-const OpenBrowserPlugin = require('open-browser-webpack-plugin');
+const uglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-  devServer: {
-    historyApiFallback: true,
-    hot: true,
-    inline: true,
-    contentBase: './assets',
-    port: 8080,
-  },
   entry: [
     path.resolve(__dirname, 'target/scala-2.12/weather-app-fastopt.js')
   ],
@@ -66,7 +60,18 @@ module.exports = {
     extensions: ['.js', '.jsx', '.css', '.scss']
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new OpenBrowserPlugin({ url: 'http://localhost:8080' })
+    new uglifyJsPlugin({
+      compress: {
+        warnings: false
+      }
+    }),
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify('production')
+      }
+    }),
+    new CopyWebpackPlugin([
+      { from: './assets/index.html', to: 'index.html' }
+    ])
   ]
 };
