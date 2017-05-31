@@ -21,6 +21,12 @@ object WeatherPage {
   private object _throttle extends js.Any
   def throttle = _throttle.asInstanceOf[js.Dynamic]
 
+  @js.native
+  @JSGlobal("appConfig")
+  object AppConfig extends js.Object {
+    val apiHost: String = js.native
+  }
+
   case class State(
     var isLoading: Boolean,
     var inputValue: String,
@@ -42,7 +48,7 @@ object WeatherPage {
         s.isLoading = true
         s
       }).runNow()
-      dom.ext.Ajax.get(url=s"http://localhost:9000/weather?city=${city}")
+      dom.ext.Ajax.get(url=s"${AppConfig.apiHost}/weather?city=${city}")
           .onComplete {
               case Success(xhr) => {
                 val option = decode[Array[WeatherResponse]](xhr.responseText)

@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const path = require('path');
 const OpenBrowserPlugin = require('open-browser-webpack-plugin');
+const HtmlPlugin = require('html-webpack-plugin');
 
 module.exports = {
   devServer: {
@@ -65,7 +66,14 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx', '.css', '.scss']
   },
+  externals: {
+    API_HOST: process.env.API_HOST
+  },
   plugins: [
+    new HtmlPlugin(Object.assign({
+      template: 'assets/index.html',
+      filename: 'index.html'
+    })),
     new webpack.HotModuleReplacementPlugin(),
     new OpenBrowserPlugin({ url: 'http://localhost:8080' })
   ]

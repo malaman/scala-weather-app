@@ -5,6 +5,11 @@
     <meta name="description" content="this is an experiment">
     <title>Weather App</title>
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <script>
+      var appConfig = {
+        apiHost: "<%= webpackConfig.externals.API_HOST %>"
+      }
+    </script>
   </head>
   <body>
     <div id="target"/>

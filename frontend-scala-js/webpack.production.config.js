@@ -2,10 +2,11 @@ const webpack = require('webpack');
 const path = require('path');
 const uglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const HtmlPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: [
-    path.resolve(__dirname, 'target/scala-2.12/weather-app-fastopt.js')
+    path.resolve(__dirname, 'target/scala-2.12/weather-app-opt.js')
   ],
   output: {
     path: path.resolve(__dirname, 'build'),
@@ -59,12 +60,19 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx', '.css', '.scss']
   },
+  externals: {
+    API_HOST: process.env.API_HOST
+  },
   plugins: [
     new uglifyJsPlugin({
       compress: {
         warnings: false
       }
     }),
+    new HtmlPlugin(Object.assign({
+      template: 'assets/index.html',
+      filename: 'index.html'
+    })),
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify('production')
