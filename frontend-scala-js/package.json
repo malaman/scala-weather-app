@@ -33,6 +33,6 @@
   },
   "scripts": {
     "start": "API_HOST=http://localhost:9000 webpack-dev-server --config webpack.config.js --devtool eval --progress --hot",
-    "build": "rm -rf ./build && sbt fullOptJS && API_HOST=https://ec2-52-59-160-108.eu-central-1.compute.amazonaws.com:9443 webpack --config webpack.production.config.js"
+    "build": "rm -rf ./build && sbt fullOptJS && API_HOST=http://ec2-52-59-160-108.eu-central-1.compute.amazonaws.com:9000 webpack --config webpack.production.config.js"
   }
 }
