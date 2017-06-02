@@ -1,4 +1,4 @@
-package weatherApp.components
+package weatherApp.pages
 
 import scala.scalajs.js
 import js.JSConverters._
@@ -12,6 +12,7 @@ import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
 import org.scalajs.dom
 import weatherApp.models.{WeatherResponse}
+import weatherApp.components.{Select, WeatherBox}
 import io.circe.generic.auto._
 import io.circe.parser.decode
 

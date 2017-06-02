@@ -5,7 +5,9 @@ import scala.scalajs.js.{JSApp}
 import scalajs.js
 import scalajs.js.annotation._
 import japgolly.scalajs.react.WebpackRequire
-import weatherApp.components.{WeatherPage}
+import japgolly.scalajs.react.vdom.html_<^._
+
+import weatherApp.router.{AppRouter}
 
 object Main extends JSApp {
   @JSImport("../../assets/scss/main.scss", JSImport.Namespace)
@@ -21,9 +23,8 @@ object Main extends JSApp {
 
   override def main(): Unit = {
     require()
-    val component = WeatherPage.Component()
     val target = dom.document.getElementById("target")
-    component.renderIntoDOM(target)
+    AppRouter.router().renderIntoDOM(target)
   }
 
 }

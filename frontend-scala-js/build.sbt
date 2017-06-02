@@ -8,8 +8,9 @@ scalaJSUseMainModuleInitializer := true
 scalaJSModuleKind := ModuleKind.CommonJSModule
 
 libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "0.9.1"
-libraryDependencies += "com.github.japgolly.scalajs-react" %%% "core" % "1.0.0-RC3"
-libraryDependencies += "com.github.japgolly.scalajs-react" %%% "test" % "1.0.0-RC3"
+libraryDependencies += "com.github.japgolly.scalajs-react" %%% "core" % "1.0.0"
+libraryDependencies += "com.github.japgolly.scalajs-react" %%% "extra" % "1.0.0"
+libraryDependencies += "com.github.japgolly.scalajs-react" %%% "test" % "1.0.0"
 libraryDependencies += "com.github.japgolly.microlibs" %%% "test-util" %  "1.5"
 libraryDependencies += "org.typelevel" %% "cats" % "0.9.0"
 libraryDependencies += "io.circe" %%% "circe-core" % "0.7.0"
