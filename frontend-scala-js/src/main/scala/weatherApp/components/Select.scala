@@ -14,8 +14,6 @@ object Select {
   object CSS extends js.Any
   CSS
 
-
-
   @ScalaJSDefined
   trait Options extends js.Object {
     val value: String
