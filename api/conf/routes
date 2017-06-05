@@ -11,8 +11,9 @@ GET     /message                    controllers.AsyncController.message
 
 #Add custom API
 GET   /places               controllers.APIController.listPlaces
-POST   /places              controllers.APIController.savePlace
-GET   /weather               controllers.WeatherController.getWeatherForCity(city="")
+POST  /places               controllers.APIController.savePlace
+GET   /weather              controllers.WeatherController.getWeatherForCity(city="")
+GET   /forecast             controllers.WeatherForecastController.getWeatherForCity(id="")
 
 GET   /cities               controllers.CitiesAPIController.getCitySuggestions(city="")
 

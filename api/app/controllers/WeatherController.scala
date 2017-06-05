@@ -31,7 +31,7 @@ class WeatherController @Inject() (
                   errors => Future(Ok("errors")),
                   cities => {
                     futures = cities.map { item =>
-                        weatherService.getWeather(s"${item.structured_formatting.main_text}, ${item.structured_formatting.secondary_text}")
+                        weatherService.getWeather(s"${item.structured_formatting.main_text},${item.structured_formatting.secondary_text}")
                     }
                   }
                 )
