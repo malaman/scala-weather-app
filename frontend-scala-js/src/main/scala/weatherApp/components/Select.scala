@@ -28,6 +28,7 @@ object Select {
     val onInputChange: js.Function1[String, Unit]
     val onChange: js.Function1[Options, Unit]
     val isLoading: Boolean
+    val backspaceRemoves: Boolean
   }
 
   val Component = JsFnComponent[Props, Children.Varargs](JsComp)
@@ -47,6 +48,7 @@ object Select {
       override val onInputChange = pOnInputChange
       override val onChange = pOnChange
       override val isLoading = pIsLoading
+      override val backspaceRemoves = false
     }
   }
 }

@@ -21,7 +21,7 @@ case class Main (
 
 case class Wind (
   speed: Float,
-  deg: Int
+  deg: Float
 )
 
 case class Clouds (

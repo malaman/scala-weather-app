@@ -9,13 +9,13 @@ import weatherApp.pages.{WeatherPage, CityPage}
 object AppRouter {
   sealed trait Page
   case object HomeRoute extends Page
-  case class CityRoute(name: String) extends Page
+  case class CityRoute(name: String, id: Int) extends Page
 
   val routerConfig = RouterConfigDsl[Page].buildConfig { dsl =>
     import dsl._
     (trimSlashes
       | staticRoute(root, HomeRoute) ~> render(WeatherPage.Component())
-      | dynamicRouteCT("city" / string("[a-z0-9]{1,20}").caseClass[CityRoute]) ~> dynRenderR(renderCityPage)
+      | dynamicRouteCT(("city" / string("[a-z0-9]{1,20}") / int).caseClass[CityRoute]) ~> dynRenderR(renderCityPage)
     )
     .notFound(redirectToPage(HomeRoute)(Redirect.Replace))
     .renderWith(layout)
@@ -27,11 +27,7 @@ object AppRouter {
 
   def layout (c: RouterCtl[Page], r: Resolution[Page]) =
     <.div(
-      <.a(
-        ^.href := "/city",
-        c setOnClick CityRoute("amsterdam"),
-        "City"
-      ),
+      c.link(CityRoute("amsterdam", 123456))("Amsterdam", ^.color := "red"),
       <.div(^.cls := "container", r.render())
     )
 

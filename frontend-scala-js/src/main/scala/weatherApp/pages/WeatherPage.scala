@@ -54,7 +54,10 @@ object WeatherPage {
               case Success(xhr) => {
                 val option = decode[Array[WeatherResponse]](xhr.responseText)
                 val weatherData = option match {
-                  case Left(failure) => Array.empty[WeatherResponse]
+                  case Left(failure) => {
+                    g.console.log(failure.toString())
+                    Array.empty[WeatherResponse]
+                  }
                   case Right(data) => data
                 }
                 $.modState(s => {
@@ -79,8 +82,13 @@ object WeatherPage {
     val throttleInput = throttleInputValueChange()
 
     def onInputValueChange(value: String): Unit = {
+      val selectedValue = try {
+        Some(value)
+      } catch {
+        case e: Exception => None : Option[String]
+      }
       $.modState(s => {
-        s.inputValue = value
+        s.inputValue = selectedValue.getOrElse("")
         s
       }).runNow()
       Callback {

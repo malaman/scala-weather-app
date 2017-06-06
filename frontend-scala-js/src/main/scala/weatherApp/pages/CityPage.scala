@@ -13,8 +13,31 @@ import japgolly.scalajs.react.extra.router.{RouterCtl}
 
 
 object CityPage {
-  case class Props(name: String, ctl: RouterCtl[AppRouter.Page])
-  val Component = ScalaComponent.builder[Props]("City Page")
-    .render(p => <.div(s"Info for item #${p.props.name}"))
+  case class State(
+    var isLoading: Boolean
+  )
+
+  case class Props(
+    name: String,
+    ctl: RouterCtl[AppRouter.Page]
+  )
+
+  class Backend($: BackendScope[Props, State]) {
+
+    def render(props: Props, state: State) = {
+      <.div(
+        s"Info for item #${props.name}",
+        <.div(
+          s"isLoading: ${state.isLoading.toString}"
+        )
+      )
+    }
+  }
+
+  val Component = ScalaComponent.builder[Props]("CityPage")
+    .initialState(State(
+      isLoading = false,
+    ))
+    .renderBackend[Backend]
     .build
 }
