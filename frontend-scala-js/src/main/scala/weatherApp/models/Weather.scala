@@ -13,7 +13,7 @@ case class Weather (
 
 case class Main (
   temp: Float,
-  pressure: Int,
+  pressure: Float,
   humidity: Int,
   temp_min: Float,
   temp_max: Float
@@ -35,6 +35,7 @@ case class Sys (
 )
 
 case class WeatherResponse (
+  id: Int,
   coord: Coord,
   weather: Array[Weather],
   main: Main,

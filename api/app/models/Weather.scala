@@ -61,6 +61,7 @@ object Sys {
 }
 
 case class WeatherResponse (
+  id: Int,
   coord: Coord = Coord(0, 0),
   weather: Array[Weather],
   main: Main,

@@ -2,31 +2,27 @@ package weatherApp.pages
 
 import scala.scalajs.js
 import js.JSConverters._
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.scalajs.js.Dynamic.{global => g}
 import scala.util.{Failure, Success}
 import scalajs.js.annotation._
+import org.scalajs.dom
 
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
-import org.scalajs.dom
-import weatherApp.models.{WeatherResponse}
-import weatherApp.components.{Select, WeatherBox}
+
 import io.circe.generic.auto._
 import io.circe.parser.decode
+
+import weatherApp.models.{WeatherResponse}
+import weatherApp.components.{Select, WeatherBox}
+import weatherApp.config.{Config}
 
 object WeatherPage {
   @js.native
   @JSImport("lodash.throttle", JSImport.Default)
   private object _throttle extends js.Any
   def throttle = _throttle.asInstanceOf[js.Dynamic]
-
-  @js.native
-  @JSGlobal("appConfig")
-  object AppConfig extends js.Object {
-    val apiHost: String = js.native
-  }
 
   case class State(
     var isLoading: Boolean,
@@ -49,27 +45,27 @@ object WeatherPage {
         s.isLoading = true
         s
       }).runNow()
-      dom.ext.Ajax.get(url=s"${AppConfig.apiHost}/weather?city=${city}")
-          .onComplete {
-              case Success(xhr) => {
-                val option = decode[Array[WeatherResponse]](xhr.responseText)
-                val weatherData = option match {
-                  case Left(failure) => {
-                    g.console.log(failure.toString())
-                    Array.empty[WeatherResponse]
-                  }
-                  case Right(data) => data
-                }
-                $.modState(s => {
-                  s.isLoading = false
-                  s.weatherData = weatherData
-                  s.selectOptions = getSelectOptions(weatherData, s.inputValue)
-                  s
-                }).runNow()
+      val host = Config.AppConfig.apiHost
+      dom.ext.Ajax.get(url=s"${host}/weather?city=${city}")
+        .onComplete {
+          case Success(xhr) => {
+            val option = decode[Array[WeatherResponse]](xhr.responseText)
+            val weatherData = option match {
+              case Left(failure) => {
+                g.console.log(failure.toString())
+                Array.empty[WeatherResponse]
               }
-              case Failure(xhr) => {
-              }
-          }
+              case Right(data) => data
+            }
+            $.modState(s => {
+              s.isLoading = false
+              s.weatherData = weatherData
+              s.selectOptions = getSelectOptions(weatherData, s.inputValue)
+              s
+            }).runNow()
+            }
+          case Failure(xhr) => {}
+        }
     }
 
     def throttleInputValueChange(): js.Dynamic = {

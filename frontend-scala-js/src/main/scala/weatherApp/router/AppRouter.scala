@@ -22,12 +22,12 @@ object AppRouter {
   }
 
   def renderCityPage(p: CityRoute, c: RouterCtl[Page]) = {
-    CityPage.Component(CityPage.Props(p.name, c))
+    CityPage.Component(CityPage.Props(2911298, p.name, c))
   }
 
   def layout (c: RouterCtl[Page], r: Resolution[Page]) =
     <.div(
-      c.link(CityRoute("amsterdam", 123456))("Amsterdam", ^.color := "red"),
+      c.link(CityRoute("amsterdam", 2911298))("Amsterdam", ^.color := "red"),
       <.div(^.cls := "container", r.render())
     )
 

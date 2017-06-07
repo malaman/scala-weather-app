@@ -1,4 +1,5 @@
 enablePlugins(ScalaJSPlugin)
+addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
 name := "weather app"
 scalaVersion := "2.12.2"
@@ -13,7 +14,8 @@ libraryDependencies += "com.github.japgolly.scalajs-react" %%% "extra" % "1.0.0"
 libraryDependencies += "com.github.japgolly.scalajs-react" %%% "test" % "1.0.0"
 libraryDependencies += "com.github.japgolly.microlibs" %%% "test-util" %  "1.5"
 libraryDependencies += "org.typelevel" %% "cats" % "0.9.0"
-libraryDependencies += "io.circe" %%% "circe-core" % "0.7.0"
-libraryDependencies += "io.circe" %%% "circe-parser" % "0.7.0"
-libraryDependencies += "io.circe" %%% "circe-generic" % "0.7.0"
-libraryDependencies += "io.circe" %% "circe-optics" % "0.7.0"
+libraryDependencies += "io.circe" %%% "circe-core" % "0.8.0"
+libraryDependencies += "io.circe" %%% "circe-parser" % "0.8.0"
+libraryDependencies += "io.circe" %%% "circe-generic" % "0.8.0"
+libraryDependencies += "io.circe" %%% "circe-generic-extras" % "0.8.0"
+libraryDependencies += "io.circe" %% "circe-optics" % "0.8.0"
