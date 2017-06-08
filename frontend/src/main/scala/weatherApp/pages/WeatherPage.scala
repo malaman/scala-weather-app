@@ -10,6 +10,7 @@ import org.scalajs.dom
 
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
+import japgolly.scalajs.react.extra.router.{RouterCtl}
 
 import io.circe.generic.auto._
 import io.circe.parser.decode
@@ -17,12 +18,17 @@ import io.circe.parser.decode
 import weatherApp.models.{WeatherResponse}
 import weatherApp.components.{Select, WeatherBox}
 import weatherApp.config.{Config}
+import weatherApp.router.{AppRouter}
 
 object WeatherPage {
   @js.native
   @JSImport("lodash.throttle", JSImport.Default)
   private object _throttle extends js.Any
   def throttle = _throttle.asInstanceOf[js.Dynamic]
+
+  case class Props (
+    ctl: RouterCtl[AppRouter.Page]
+  )
 
   case class State(
     var isLoading: Boolean,
@@ -31,7 +37,8 @@ object WeatherPage {
     var selectOptions: Array[Select.Options]
   )
 
-  class Backend($: BackendScope[Unit, State]) {
+  class Backend($: BackendScope[Props, State]) {
+
     def getSelectOptions(data: Array[WeatherResponse], intputValue: String) = {
       data.zipWithIndex.map { case (item, index) => new Select.Options {
         override val value = s"${intputValue}::${index}"
@@ -107,7 +114,7 @@ object WeatherPage {
       }).runNow()
     }
 
-    def render(s: State) = {
+    def render(p: Props, s: State) = {
       val select = Select.Component(
         Select.props(
           "form-field-name",
@@ -118,7 +125,7 @@ object WeatherPage {
           pIsLoading = s.isLoading
         )
       )()
-      val tableProps = try {
+      val boxProps = try {
         val arr = s.inputValue.split("::")
         val index = if (arr.length == 2) arr(1).toInt else -1
         if (index == -1) None else Some(s.weatherData(index))
@@ -137,12 +144,14 @@ object WeatherPage {
             ^.marginBottom := 10.px,
             select
         ),
-        <.div(WeatherBox.Component(tableProps))
+        <.div(
+          WeatherBox.Component(WeatherBox.Props(boxProps, p.ctl))
+        )
       )
     }
   }
 
-    val Component = ScalaComponent.builder[Unit]("WeatherPage")
+    val Component = ScalaComponent.builder[Props]("WeatherPage")
       .initialState(State(
         isLoading = false,
         inputValue = "",

@@ -2,7 +2,7 @@
 
 The repository is a full stack application, which shows weather forecasts for selected city.
 
-## api (backend)
+## api
 
 Tech stack:
  - Scala
@@ -13,13 +13,12 @@ Tech stack:
   - Google maps API
 
 
- ## frontend-scala-js
+ ## frontend
 
 Tech stack:
- - Scala.js
- - scalajs-react package
- - circe
-
+ - [Scala.js](https://github.com/scala-js/scala-js)
+ - [scalajs-react](https://github.com/japgolly/scalajs-react)
+ - [circe](https://circe.github.io/circe/)
 
 # Setup
 
@@ -33,10 +32,10 @@ Tech stack:
  [http://openweathermap.org](http://openweathermap.org/) and [Google Map API key](https://developers.google.com/maps/documentation/javascript/get-api-key) are required to start backend. It is also possible to use backend from demo application
 (http://ec2-52-59-160-108.eu-central-1.compute.amazonaws.com:9000)
 
-## frontend-scala-js
+## frontend
 
 1. Clone repository
-2. `cd frontent-scala-js`
+2. `cd frontent`
 3. `yarn install`
 4. `sbt fastOptJS`
 5. `npm run start`
@@ -48,7 +47,7 @@ If you want to use backend from demo application (`http://ec2-52-59-160-108.eu-c
 
 ## Road map
 
-- [ ] Integrate scalajs-router into application (use separate route for weather in selected city)
+- [x] Integrate scalajs-react router into the application (use separate route for weather in selected city)
 
 - [ ] Save selected cities in browsers localStorage
 

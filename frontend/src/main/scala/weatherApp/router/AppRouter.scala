@@ -14,11 +14,15 @@ object AppRouter {
   val routerConfig = RouterConfigDsl[Page].buildConfig { dsl =>
     import dsl._
     (trimSlashes
-      | staticRoute(root, HomeRoute) ~> render(WeatherPage.Component())
+      | staticRoute(root, HomeRoute) ~> renderR(renderWeatherPage)
       | dynamicRouteCT(("city" / string("[a-z0-9]{1,20}") / int).caseClass[CityRoute]) ~> dynRenderR(renderCityPage)
     )
     .notFound(redirectToPage(HomeRoute)(Redirect.Replace))
     .renderWith(layout)
+  }
+
+  def renderWeatherPage(c: RouterCtl[Page]) = {
+    WeatherPage.Component(WeatherPage.Props(c))
   }
 
   def renderCityPage(p: CityRoute, c: RouterCtl[Page]) = {
