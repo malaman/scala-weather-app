@@ -31,7 +31,6 @@ object AppRouter {
 
   def layout (c: RouterCtl[Page], r: Resolution[Page]) =
     <.div(
-      c.link(CityRoute("amsterdam", 2911298))("Amsterdam", ^.color := "red"),
       <.div(^.cls := "container", r.render())
     )
 

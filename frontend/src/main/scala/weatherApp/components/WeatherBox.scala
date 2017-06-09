@@ -22,27 +22,42 @@ object WeatherBox {
     ctl: RouterCtl[AppRouter.Page]
   )
 
-  val Component = ScalaComponent.builder[Props]("Table")
+  val Component = ScalaComponent.builder[Props]("WeatherBox")
     .render($ => {
       if ($.props.weather.isDefined) {
         val weather = $.props.weather.get
         val iconStr = s"wi-owm-${weather.weather(0).id}"
         $.props.ctl.link(AppRouter.CityRoute(weather.name.toLowerCase(), weather.id))(
           ^.cls := "weather-box",
-          ^.width := "25%",
+          ^.maxWidth := "400px",
           ^.display := "flex",
           ^.border := "1px solid",
+          ^.color := "black",
           <.div(
             ^.margin := "5px",
             ^.display := "flex",
             ^.flexDirection := "row",
             ^.justifyContent := "space-between",
             ^.width := "100%",
+            ^.fontSize := 15.px,
             <.div(
               <.div(weather.name),
               <.div(
-                ^.fontSize := 15.px,
                 s"${(math rint weather.main.temp * 10) / 10} °C"
+              )
+            ),
+            <.div(
+              ^.display := "flex",
+              ^.justifyContent := "center",
+              ^.alignItems := "center",
+              <.div(
+                ^.className := s"wi ${iconStr}",
+                ^.marginRight := "10px",
+                ^.fontSize := 25.px,
+                ^.fontWeight := "100",
+              ),
+              <.div(
+                weather.weather(0).main
               )
             ),
             <.div(
@@ -50,22 +65,10 @@ object WeatherBox {
               ^.flexDirection := "row",
               ^.justifyContent := "center",
               <.div(
-                <.div(
-                  ^.className := s"wi ${iconStr}"
-                ),
-                <.div(
-                  weather.weather(0).main
-                )
-              ),
-              <.div(
                 ^.display := "flex",
                 ^.justifyContent := "center",
                 ^.alignItems := "center",
-                <.button(
-                  ^.height := 20.px,
-                  ^.marginLeft := 5.px,
-                  "more"
-                )
+                WeatherBoxBtn.Component()
               )
             )
           )

@@ -1,0 +1,8 @@
+.weather-box {
+  text-decoration: none;
+  &:hover {
+    .weather-box-btn {
+        background-color: #3abcff;
+      }
+  }
+}

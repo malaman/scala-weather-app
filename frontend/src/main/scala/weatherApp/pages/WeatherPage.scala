@@ -133,7 +133,6 @@ object WeatherPage {
         case e: Exception => None
       }
       <.div(
-        ^.width := 1000.px,
         ^.margin := "0 auto",
         ^.className := "weather-page",
         <.div(

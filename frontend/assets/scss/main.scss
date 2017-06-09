@@ -1,5 +1,10 @@
 //Theme scss
 @import "theme/main";
 
-//app
-@import "components/WeatherPage";
+
+//components
+@import "components/WeatherBox";
+@import "components/WeatherBoxBtn";
+
+//pages
+@import "pages/WeatherPage";

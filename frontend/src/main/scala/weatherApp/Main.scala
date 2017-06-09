@@ -10,15 +10,20 @@ import japgolly.scalajs.react.vdom.html_<^._
 import weatherApp.router.{AppRouter}
 
 object Main extends JSApp {
+  @JSImport("normalize.css", JSImport.Namespace)
+  @js.native
+  object Normalize extends js.Any
+
+
   @JSImport("../../assets/scss/main.scss", JSImport.Namespace)
   @js.native
   object CSS extends js.Any
-  CSS
 
   def require(): Unit = {
     WebpackRequire.React
     WebpackRequire.ReactDOM
-    ()
+    Normalize
+    CSS    
   }
 
   override def main(): Unit = {

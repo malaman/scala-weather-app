@@ -40,6 +40,7 @@ module.exports = {
             loader: "css-loader",
             options: {
               includePaths: [
+                path.resolve('./node_modules/normalize.css/normalize.css'),
                 path.resolve('./node_modules/react-select/dist/react-select.css'),
                 path.resolve('./node_modules/weather-icons/css/weather-icons.min.css')
               ]
