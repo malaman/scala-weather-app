@@ -35,7 +35,7 @@ object Main {
 
 case class Wind (
   speed: Float,
-  deg: Float
+  deg: Option[Float]
 )
 
 object Wind {
@@ -65,7 +65,7 @@ case class WeatherResponse (
   coord: Coord = Coord(0, 0),
   weather: Array[Weather],
   main: Main,
-  visibility: Int,
+  visibility: Option[Int],
   wind: Wind,
   clouds: Clouds,
   sys: Sys,

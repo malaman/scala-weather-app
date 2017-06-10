@@ -21,7 +21,7 @@ case class Main (
 
 case class Wind (
   speed: Float,
-  deg: Float
+  deg: Option[Float]
 )
 
 case class Clouds (
@@ -39,7 +39,7 @@ case class WeatherResponse (
   coord: Coord,
   weather: Array[Weather],
   main: Main,
-  visibility: Int,
+  visibility: Option[Int],
   wind: Wind,
   clouds: Clouds,
   sys: Sys,

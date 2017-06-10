@@ -15,7 +15,7 @@ object AppRouter {
     import dsl._
     (trimSlashes
       | staticRoute(root, HomeRoute) ~> renderR(renderWeatherPage)
-      | dynamicRouteCT(("city" / string("[a-z0-9]{1,20}") / int).caseClass[CityRoute]) ~> dynRenderR(renderCityPage)
+      | dynamicRouteCT(("city" / string(".*") / int).caseClass[CityRoute]) ~> dynRenderR(renderCityPage)
     )
     .notFound(redirectToPage(HomeRoute)(Redirect.Replace))
     .renderWith(layout)
@@ -26,7 +26,7 @@ object AppRouter {
   }
 
   def renderCityPage(p: CityRoute, c: RouterCtl[Page]) = {
-    CityPage.Component(CityPage.Props(2911298, p.name, c))
+    CityPage.Component(CityPage.Props(p.id, p.name, c))
   }
 
   def layout (c: RouterCtl[Page], r: Resolution[Page]) =

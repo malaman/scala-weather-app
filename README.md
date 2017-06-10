@@ -49,6 +49,8 @@ If you want to use backend from demo application (`http://ec2-52-59-160-108.eu-c
 
 - [x] Integrate scalajs-react router into the application (use separate route for weather in selected city)
 
+- [ ] Add diod [https://github.com/suzaku-io/diode](https://github.com/suzaku-io/diode) package to frontend project for store management
+
 - [ ] Save selected cities in browsers localStorage
 
 - [ ] Add `slick` package to api project for saving user and selected cities information

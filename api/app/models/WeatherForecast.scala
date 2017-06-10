@@ -33,7 +33,7 @@ case class ForecastWeather (
   main: Main,
   weather: Array[Weather],
   wind: Wind,
-  rain: Rain,
+  rain: Option[Rain],
   dt_txt: String
 )
 

@@ -35,7 +35,6 @@ object CityPage {
     private val props = $.props.runNow()
 
     def start= Callback {
-      g.console.log(props.id)
       val host = Config.AppConfig.apiHost
       dom.ext.Ajax.get(url=s"${host}/forecast?id=${props.id}")
         .onComplete {
@@ -59,13 +58,21 @@ object CityPage {
       }
     }
 
-    def render(props: Props, state: State) = {
-      <.div(
-        s"Info for item #${props.name}",
-        <.div(
-          s"isLoading: ${state.isLoading.toString}"
+    def render(props: Props, state: State): VdomElement = {
+      if (state.forecast.isDefined) {
+        val forecast = state.forecast.get
+        return <.div(
+          <.div(
+            ^.fontWeight := "bold",
+            ^.marginBottom := 15.px,
+            s"${forecast.city.name}, ${forecast.city.country}",
+          ),
+          <.div(
+            s"isLoading: ${state.isLoading.toString}"
+          )
         )
-      )
+      }
+      return <.div()
     }
   }
 
