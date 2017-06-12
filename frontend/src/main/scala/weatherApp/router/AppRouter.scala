@@ -4,12 +4,15 @@ import japgolly.scalajs.react.extra._
 import japgolly.scalajs.react.extra.router._
 import japgolly.scalajs.react.vdom.html_<^._
 
+import weatherApp.diode.{AppCircuit, AppModel, AppState}
 import weatherApp.pages.{WeatherPage, CityPage}
 
 object AppRouter {
   sealed trait Page
   case object HomeRoute extends Page
   case class CityRoute(name: String, id: Int) extends Page
+
+  val connection = AppCircuit.connect(_.state)
 
   val routerConfig = RouterConfigDsl[Page].buildConfig { dsl =>
     import dsl._
@@ -21,8 +24,10 @@ object AppRouter {
     .renderWith(layout)
   }
 
-  def renderWeatherPage(c: RouterCtl[Page]) = {
-    WeatherPage.Component(WeatherPage.Props(c))
+  def renderWeatherPage(ctl: RouterCtl[Page]) = {
+    connection(proxy =>
+      WeatherPage.Component(WeatherPage.Props(proxy, ctl))
+    )
   }
 
   def renderCityPage(p: CityRoute, c: RouterCtl[Page]) = {

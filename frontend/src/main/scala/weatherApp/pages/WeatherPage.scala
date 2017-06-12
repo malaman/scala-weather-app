@@ -15,10 +15,14 @@ import japgolly.scalajs.react.extra.router.{RouterCtl}
 import io.circe.generic.auto._
 import io.circe.parser.decode
 
+import diode.react.ModelProxy
+import diode.Action
+
 import weatherApp.models.{WeatherResponse}
 import weatherApp.components.{Select, WeatherBox}
 import weatherApp.config.{Config}
 import weatherApp.router.{AppRouter}
+import weatherApp.diode.{AppState, GetWeatherForCity}
 
 object WeatherPage {
   @js.native
@@ -27,6 +31,7 @@ object WeatherPage {
   def throttle = _throttle.asInstanceOf[js.Dynamic]
 
   case class Props (
+    proxy: ModelProxy[AppState],
     ctl: RouterCtl[AppRouter.Page]
   )
 
@@ -38,6 +43,10 @@ object WeatherPage {
   )
 
   class Backend($: BackendScope[Props, State]) {
+
+    private val props = $.props.runNow()
+
+    private val dispatch: Action => Callback = props.proxy.dispatchCB
 
     def getSelectOptions(data: Array[WeatherResponse], intputValue: String) = {
       data.zipWithIndex.map { case (item, index) => new Select.Options {
@@ -64,6 +73,7 @@ object WeatherPage {
               }
               case Right(data) => data
             }
+            dispatch(GetWeatherForCity(weatherData)).runNow()
             $.modState(s => {
               s.isLoading = false
               s.weatherData = weatherData
@@ -115,6 +125,8 @@ object WeatherPage {
     }
 
     def render(p: Props, s: State) = {
+      val proxy = p.proxy()
+      val weatherData = proxy.weatherSuggestions
       val select = Select.Component(
         Select.props(
           "form-field-name",
@@ -128,7 +140,7 @@ object WeatherPage {
       val boxProps = try {
         val arr = s.inputValue.split("::")
         val index = if (arr.length == 2) arr(1).toInt else -1
-        if (index == -1) None else Some(s.weatherData(index))
+        if (index == -1) None else Some(weatherData(index))
       } catch {
         case e: Exception => None
       }

@@ -20,3 +20,7 @@ libraryDependencies += "io.circe" %%% "circe-generic" % "0.8.0"
 libraryDependencies += "io.circe" %%% "circe-generic-extras" % "0.8.0"
 libraryDependencies += "io.circe" %% "circe-optics" % "0.8.0"
 libraryDependencies += "io.suzaku" %%% "diode" % "1.1.2"
+libraryDependencies += "io.suzaku" %%% "diode-devtools" % "1.1.2"
+libraryDependencies += "io.suzaku" %%% "diode-react"% "1.1.2"
+
+libraryDependencies += "io.suzaku" %%% "boopickle" % "1.2.6"
