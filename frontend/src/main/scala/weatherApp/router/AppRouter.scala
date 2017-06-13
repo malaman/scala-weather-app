@@ -1,11 +1,23 @@
 package weatherApp.router
 
+import org.scalajs.dom
+import scala.util.{Failure, Success}
+import scala.scalajs.js.Dynamic.{global => g}
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import io.circe.generic.auto._
+import io.circe.parser.decode
+
 import japgolly.scalajs.react.extra._
 import japgolly.scalajs.react.extra.router._
 import japgolly.scalajs.react.vdom.html_<^._
+import japgolly.scalajs.react._
 
-import weatherApp.diode.{AppCircuit, AppModel, AppState}
+import diode.Action
+import weatherApp.diode.{AppCircuit, AppModel, AppState, GetWeatherForecast}
 import weatherApp.pages.{WeatherPage, CityPage}
+import weatherApp.config.{Config}
+import weatherApp.models.{WeatherForecastResponse}
 
 object AppRouter {
   sealed trait Page
@@ -30,8 +42,29 @@ object AppRouter {
     )
   }
 
-  def renderCityPage(p: CityRoute, c: RouterCtl[Page]) = {
-    CityPage.Component(CityPage.Props(p.id, p.name, c))
+  def renderCityPage(p: CityRoute, ctl: RouterCtl[Page]) = {
+    val host = Config.AppConfig.apiHost
+    dom.ext.Ajax.get(url=s"${host}/forecast?id=${p.id}")
+      .onComplete {
+        case Success(xhr) => {
+          val option = decode[WeatherForecastResponse](xhr.responseText)
+          option match {
+            case Left(failure) => {
+              g.console.log(failure.toString())
+            }
+            case Right(data) => {
+              AppCircuit.dispatch(GetWeatherForecast(Some(data)))
+            }
+          }
+        }
+        case Failure(xhr) => {
+        }
+    }
+    connection(proxy =>
+      CityPage.Component(CityPage.Props(proxy, p.id, p.name, ctl))
+    )
+
+
   }
 
   def layout (c: RouterCtl[Page], r: Resolution[Page]) =

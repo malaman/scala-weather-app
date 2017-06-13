@@ -22,7 +22,7 @@ import weatherApp.models.{WeatherResponse}
 import weatherApp.components.{Select, WeatherBox}
 import weatherApp.config.{Config}
 import weatherApp.router.{AppRouter}
-import weatherApp.diode.{AppState, GetWeatherForCity}
+import weatherApp.diode.{AppState, GetWeatherSuggestions}
 
 object WeatherPage {
   @js.native
@@ -73,7 +73,7 @@ object WeatherPage {
               }
               case Right(data) => data
             }
-            dispatch(GetWeatherForCity(weatherData)).runNow()
+            dispatch(GetWeatherSuggestions(weatherData)).runNow()
             $.modState(s => {
               s.isLoading = false
               s.weatherData = weatherData

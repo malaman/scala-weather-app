@@ -3,6 +3,9 @@ package weatherApp.pages
 import scala.scalajs.js
 import org.scalajs.dom
 
+import diode.react.ModelProxy
+import diode.Action
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.scalajs.js.Dynamic.{global => g}
 import scala.util.{Failure, Success}
@@ -17,6 +20,7 @@ import io.circe.parser.decode
 import weatherApp.router.{AppRouter}
 import weatherApp.models.{WeatherForecastResponse}
 import weatherApp.config.{Config}
+import weatherApp.diode.{AppState}
 
 object CityPage {
   case class State(
@@ -25,6 +29,7 @@ object CityPage {
   )
 
   case class Props(
+    proxy: ModelProxy[AppState],
     id: Int,
     name: String,
     ctl: RouterCtl[AppRouter.Page]
@@ -59,8 +64,10 @@ object CityPage {
     }
 
     def render(props: Props, state: State): VdomElement = {
-      if (state.forecast.isDefined) {
-        val forecast = state.forecast.get
+      val proxy = props.proxy()
+      val forecastOption= proxy.forecast
+      if (forecastOption.isDefined) {
+        val forecast = forecastOption.get
         return <.div(
           <.div(
             ^.fontWeight := "bold",
