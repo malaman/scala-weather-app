@@ -21,6 +21,7 @@ import weatherApp.router.{AppRouter}
 import weatherApp.models.{WeatherForecastResponse}
 import weatherApp.config.{Config}
 import weatherApp.diode.{AppState}
+import weatherApp.components.{WeatherForecastBox}
 
 object CityPage {
   case class State(
@@ -39,28 +40,13 @@ object CityPage {
 
     private val props = $.props.runNow()
 
-    def start= Callback {
-      val host = Config.AppConfig.apiHost
-      dom.ext.Ajax.get(url=s"${host}/forecast?id=${props.id}")
-        .onComplete {
-          case Success(xhr) => {
-            val option = decode[WeatherForecastResponse](xhr.responseText)
-            val weatherForecast = option match {
-              case Left(failure) => {
-                g.console.log(failure.toString())
-                None : Option[WeatherForecastResponse]
-              }
-              case Right(data) => Some(data)
-            }
-            $.modState(s => {
-              s.isLoading = false
-              s.forecast = weatherForecast
-              s
-            }).runNow()
-          }
-          case Failure(xhr) => {
-          }
-      }
+    def getForecastBoxes(forecast: WeatherForecastResponse) = {
+      forecast.list.map(item => {
+        WeatherForecastBox.Component.withKey(item.dt)(
+          WeatherForecastBox.Props(item)
+        )
+      })
+
     }
 
     def render(props: Props, state: State): VdomElement = {
@@ -68,6 +54,9 @@ object CityPage {
       val forecastOption= proxy.forecast
       if (forecastOption.isDefined) {
         val forecast = forecastOption.get
+        val Box = WeatherForecastBox.Component(
+          WeatherForecastBox.Props(forecast.list(0))
+        )
         return <.div(
           <.div(
             ^.fontWeight := "bold",
@@ -75,7 +64,9 @@ object CityPage {
             s"${forecast.city.name}, ${forecast.city.country}",
           ),
           <.div(
-            s"isLoading: ${state.isLoading.toString}"
+            ^.display := "flex",
+            ^.overflowY := "scroll",
+            getForecastBoxes(forecast).toVdomArray
           )
         )
       }
@@ -89,6 +80,5 @@ object CityPage {
       forecast = None : Option[WeatherForecastResponse]
     ))
     .renderBackend[Backend]
-    .componentDidMount(_.backend.start)
     .build
 }

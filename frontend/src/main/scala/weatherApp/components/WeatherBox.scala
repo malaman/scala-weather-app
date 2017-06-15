@@ -12,11 +12,6 @@ import weatherApp.models.{WeatherResponse}
 import weatherApp.router.{AppRouter}
 
 object WeatherBox {
-  @JSImport("weather-icons/css/weather-icons.min.css", JSImport.Namespace)
-  @js.native
-  object CSS extends js.Any
-  CSS
-
   case class Props (
     weather: Option[WeatherResponse],
     ctl: RouterCtl[AppRouter.Page]

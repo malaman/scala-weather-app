@@ -19,11 +19,16 @@ object Main extends JSApp {
   @js.native
   object CSS extends js.Any
 
+  @JSImport("weather-icons/css/weather-icons.min.css", JSImport.Namespace)
+  @js.native
+  object WeatherIcons extends js.Any
+
   def require(): Unit = {
     WebpackRequire.React
     WebpackRequire.ReactDOM
     Normalize
-    CSS    
+    CSS
+    WeatherIcons
   }
 
   override def main(): Unit = {
@@ -31,5 +36,4 @@ object Main extends JSApp {
     val target = dom.document.getElementById("target")
     AppRouter.router().renderIntoDOM(target)
   }
-
 }

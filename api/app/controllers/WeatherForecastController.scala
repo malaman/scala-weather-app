@@ -12,6 +12,7 @@ import scala.collection.mutable.ListBuffer
 import models._
 import services.{WeatherForecastService}
 
+
 @Singleton
 class WeatherForecastController @Inject() (
   weatherForecastService: WeatherForecastService
