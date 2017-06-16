@@ -8,7 +8,7 @@ case class Coord (
 )
 
 object Coord {
-  implicit val v = Json.format[Coord]
+  implicit val f = Json.format[Coord]
 }
 
 case class Weather (
@@ -18,7 +18,7 @@ case class Weather (
 )
 
 object Weather {
-  implicit val v = Json.format[Weather]
+  implicit val f = Json.format[Weather]
 }
 
 case class Main (
@@ -30,7 +30,7 @@ case class Main (
 )
 
 object Main {
-  implicit val v = Json.format[Main]
+  implicit val f = Json.format[Main]
 }
 
 case class Wind (
@@ -39,7 +39,7 @@ case class Wind (
 )
 
 object Wind {
-  implicit val v = Json.format[Wind]
+  implicit val f = Json.format[Wind]
 }
 
 case class Clouds (
@@ -47,7 +47,7 @@ case class Clouds (
 )
 
 object Clouds {
-  implicit val v = Json.format[Clouds]
+  implicit val f = Json.format[Clouds]
 }
 
 case class Sys (
@@ -57,7 +57,7 @@ case class Sys (
 )
 
 object Sys {
-  implicit val v = Json.format[Sys]
+  implicit val f = Json.format[Sys]
 }
 
 case class WeatherResponse (
@@ -73,5 +73,5 @@ case class WeatherResponse (
 )
 
 object WeatherResponse {
-  implicit val v = Json.format[WeatherResponse]
+  implicit val f = Json.format[WeatherResponse]
 }

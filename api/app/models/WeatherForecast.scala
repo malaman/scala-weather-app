@@ -11,7 +11,7 @@ case class OpenWeatherCity (
 )
 
 object OpenWeatherCity {
-  implicit val v = Json.format[OpenWeatherCity]
+  implicit val f = Json.format[OpenWeatherCity]
 }
 
 case class Rain (
@@ -38,9 +38,20 @@ case class ForecastWeather (
 )
 
 object ForecastWeather {
-  implicit val v = Json.format[ForecastWeather]
+  implicit val f = Json.format[ForecastWeather]
 }
 
+
+case class DailyForecast (
+  day: String,
+  weather: Weather,
+  temp_min: Float,
+  temp_max: Float
+)
+
+object DailyForecast {
+  implicit val f = Json.format[DailyForecast]
+}
 case class WeatherForecastResponse (
   cod: String,
   message: Float,
@@ -50,5 +61,5 @@ case class WeatherForecastResponse (
 )
 
 object WeatherForecastResponse {
-  implicit val v = Json.format[WeatherForecastResponse]
+  implicit val f = Json.format[WeatherForecastResponse]
 }

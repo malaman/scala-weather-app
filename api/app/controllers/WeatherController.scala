@@ -11,6 +11,7 @@ import scala.util.Properties
 import scala.collection.mutable.ListBuffer
 import models._
 import services.{CitiesService, WeatherService}
+import utils.{WeatherUtils}
 
 @Singleton
 class WeatherController @Inject() (
@@ -18,17 +19,17 @@ class WeatherController @Inject() (
     weatherService: WeatherService
 ) extends Controller {
 
-    def getWeatherForCity(city: String) = Action.async {request =>
+    def getWeatherForCity(city: String) = Action.async { implicit request =>
         val city = request.getQueryString("city").mkString
-        val citiesFuture = citiesService.getCities(city);
+        val citiesFuture = citiesService.getCities(city)
         citiesFuture.flatMap {
-            response => {
+            case response => {
                 val resp = Json.parse(response.body)
                 val predictions = (resp \ "predictions")
                 var futures: Seq[Future[WSResponse]] = Seq.empty[Future[WSResponse]]
                 val jsr = predictions.validate[Seq[GoogleCity]]
                 jsr.fold(
-                  errors => Future(Ok("errors")),
+                  errors => Future(BadRequest("{\"error\": \"City response error\"}")),
                   cities => {
                     futures = cities.map { item =>
                         weatherService.getWeather(s"${item.structured_formatting.main_text},${item.structured_formatting.secondary_text}")
@@ -43,14 +44,14 @@ class WeatherController @Inject() (
 											val resp = Json.parse(result.body)
                         val jsresp = (resp).validate[WeatherResponse]
                         jsresp.fold (
-                            err => println(err),
+                            err => BadRequest("{\"error\": \"Weather response validation error\"}"),
                             weath => list += weath
                         )
                     	}
                     }
                     Ok(Json.toJson(list.toList))
                     }
-                    case t => BadRequest("An error has occured: " + t)
+                  case _ => BadRequest("{\"error\": \"Weather response error\"}")
                 }
             }
         }
