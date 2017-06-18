@@ -12,6 +12,7 @@ import weatherApp.models.{WeatherResponse}
 import weatherApp.router.{AppRouter}
 
 object WeatherBox {
+  
   case class Props (
     weather: Option[WeatherResponse],
     ctl: RouterCtl[AppRouter.Page]

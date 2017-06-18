@@ -13,7 +13,7 @@ GET     /message                    controllers.AsyncController.message
 GET   /places               controllers.APIController.listPlaces
 POST  /places               controllers.APIController.savePlace
 GET   /weather              controllers.WeatherController.getWeatherForCity(city="")
-GET   /forecast             controllers.WeatherForecastController.getWeatherForCity(id="")
+GET   /forecast             controllers.WeatherForecastController.getForecastForCity(id="")
 
 GET   /cities               controllers.CitiesAPIController.getCitySuggestions(city="")
 

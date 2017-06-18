@@ -12,13 +12,12 @@ import scala.collection.mutable.ListBuffer
 import models._
 import services.{WeatherForecastService}
 
-
 @Singleton
 class WeatherForecastController @Inject() (
   weatherForecastService: WeatherForecastService
 ) extends Controller {
 
-  def getWeatherForCity(cityID: String) = Action.async {request =>
+  def getForecastForCity(cityID: String) = Action.async {request =>
     val cityID = request.getQueryString("id").mkString
     val forecastFuture = weatherForecastService.getForecast(cityID)
     forecastFuture.map {
@@ -26,15 +25,13 @@ class WeatherForecastController @Inject() (
           val resp = Json.parse(response.body)
           val jsresp = (resp).validate[WeatherForecastResponse]
           jsresp.fold(
-            errors => BadRequest(s"{error: Parsing error - ${errors}}"),
+            errors => BadRequest("{\"error\": \"Forecast validation error\"}"),
             forecast => {
               Ok(Json.toJson(forecast))
             }
           )
         }
-        case failure => {
-          BadRequest("{\"error\": \"Network error\"}")
-        }
+        case _ => BadRequest("{\"error\": \"Network error\"}")
     }
   }
 }
