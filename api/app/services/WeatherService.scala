@@ -1,11 +1,9 @@
 package services
 
 import javax.inject._
-import play.api.libs.functional.syntax._
 import javax.inject.{Inject, Singleton}
 import play.api.libs.ws._
 import scala.concurrent._
-import ExecutionContext.Implicits.global
 import scala.util.Properties
 
 @Singleton
