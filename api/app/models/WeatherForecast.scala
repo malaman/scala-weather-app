@@ -31,7 +31,7 @@ object Rain {
 case class ForecastWeather (
   dt: Int,
   main: Main,
-  weather: Array[Weather],
+  weather: List[Weather],
   wind: Wind,
   rain: Option[Rain],
   dt_txt: String
@@ -43,7 +43,7 @@ object ForecastWeather {
 
 
 case class DailyForecast (
-  day: String,
+  day: Int,
   weather: Weather,
   temp_min: Float,
   temp_max: Float
@@ -56,10 +56,23 @@ case class WeatherForecastResponse (
   cod: String,
   message: Float,
   cnt: Int,
-  list: Array[ForecastWeather],
+  list: List[ForecastWeather],
   city: OpenWeatherCity
 )
 
 object WeatherForecastResponse {
   implicit val f = Json.format[WeatherForecastResponse]
+}
+
+case class WeatherForecast (
+  cod: String,
+  message: Float,
+  cnt: Int,
+  list: List[ForecastWeather],
+  city: OpenWeatherCity,
+  daily: List[DailyForecast]
+)
+
+object WeatherForecast {
+  implicit val f = Json.format[WeatherForecast]
 }

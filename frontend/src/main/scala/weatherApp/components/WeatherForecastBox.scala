@@ -3,8 +3,6 @@ package weatherApp.components
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
 import scalajs.js.{Date}
-import scala.scalajs.js.Dynamic.{global => g}
-
 import weatherApp.models.{ForecastWeather}
 
 object WeatherForecastBox {

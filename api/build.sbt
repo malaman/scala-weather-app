@@ -12,3 +12,4 @@ libraryDependencies += filters
 libraryDependencies += "org.xerial" % "sqlite-jdbc" % "3.18.0"
 libraryDependencies += "com.typesafe.play" %% "play-slick" % "2.0.0"
 libraryDependencies += "com.typesafe.play" %% "play-slick-evolutions" % "2.0.0"
+libraryDependencies += "com.github.nscala-time" %% "nscala-time" % "2.16.0"

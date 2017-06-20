@@ -7,6 +7,7 @@ import ExecutionContext.Implicits.global
 import javax.inject.{Inject, Singleton}
 import models._
 import services.{WeatherForecastService}
+import utils.{WeatherUtils}
 
 @Singleton
 class WeatherForecastController @Inject() (
@@ -23,7 +24,16 @@ class WeatherForecastController @Inject() (
           jsresp.fold(
             errors => BadRequest("{\"error\": \"Forecast validation error\"}"),
             forecast => {
-              Ok(Json.toJson(forecast))
+              val daily = WeatherUtils.getDailyWeather(forecast)
+              val result = WeatherForecast(
+                forecast.cod,
+                forecast.message,
+                forecast.cnt,
+                forecast.list,
+                forecast.city,
+                daily
+              )
+              Ok(Json.toJson(result))
             }
           )
         }

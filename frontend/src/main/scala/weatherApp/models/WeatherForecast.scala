@@ -11,23 +11,30 @@ case class OpenWeatherCity (
   country: String
 )
 
-
 @ConfiguredJsonCodec case class Rain (
   @JsonKey("3h") three_h: Option[Float]
 )
 case class ForecastWeather (
   dt: Int,
   main: Main,
-  weather: Array[Weather],
+  weather: List[Weather],
   wind: Wind,
   rain: Option[Rain],
   dt_txt: String
+)
+
+case class DailyForecast (
+  day: Int,
+  weather: Weather,
+  temp_min: Float,
+  temp_max: Float
 )
 
 case class WeatherForecastResponse (
   cod: String,
   message: Float,
   cnt: Int,
-  list: Array[ForecastWeather],
-  city: OpenWeatherCity
+  list: List[ForecastWeather],
+  city: OpenWeatherCity,
+  daily: List[DailyForecast]
 )

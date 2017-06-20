@@ -1,10 +1,7 @@
 package weatherApp.diode
 
-import scala.scalajs.js.Dynamic.{global => g}
-
 import diode._
 import diode.react.ReactConnector
-import diode.ActionResult.{ModelUpdate, ModelUpdateSilent}
 
 import weatherApp.models.{WeatherResponse, WeatherForecastResponse}
 

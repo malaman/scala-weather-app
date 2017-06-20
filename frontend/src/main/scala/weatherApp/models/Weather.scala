@@ -37,7 +37,7 @@ case class Sys (
 case class WeatherResponse (
   id: Int,
   coord: Coord,
-  weather: Array[Weather],
+  weather: List[Weather],
   main: Main,
   visibility: Option[Int],
   wind: Wind,
