@@ -1,6 +1,6 @@
 package utils
 
-import models.{WeatherForecastResponse, ForecastWeather, DailyForecast}
+import models.{WeatherForecastResponse, ForecastWeather, DailyForecast, Weather}
 import com.github.nscala_time.time.Imports.{DateTime}
 import scala.collection.mutable.Map
 
@@ -29,14 +29,19 @@ object WeatherUtils {
 	private def getWeatherForDay(list: List[ForecastWeatherWithDay]) = {
 		val dayWeather = Map[Int, Int]()
 		list.foreach(item => {
-			val id = item.forecastWeather.weather(0).id
+			val id = item.forecastWeather.weather.head.id
 			if (dayWeather.getOrElse(id, -1) != -1)
 				dayWeather(id) = dayWeather(id) + 1
 			else
 				dayWeather(id) = 1
 		})
 		val (id, value) = dayWeather.maxBy { case (key, value) => value }
-		list.filter(_.forecastWeather.weather(0).id == id)(0).forecastWeather.weather(0)
+		val option = list.filter(_.forecastWeather.weather.head.id == id)
+			.headOption
+		if (option.isDefined)
+			option.get.forecastWeather.weather.head
+		else
+			Weather(id = -1, main = "", description = "")	
 	}
 	/**
 	 * Calculates daily weather based on openweather forecast response

@@ -41,7 +41,6 @@ object ForecastWeather {
   implicit val f = Json.format[ForecastWeather]
 }
 
-
 case class DailyForecast (
   day: Int,
   weather: Weather,
