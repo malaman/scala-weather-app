@@ -12,7 +12,7 @@ class WeatherService @Inject() (ws: WSClient) {
     val API_KEY = Properties.envOrElse("WEATHER_API_KEY", "WEATHER_API_KEY")
 
     def getWeather(city: String): Future[WSResponse] = {
-        val url = s"http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric"
-        ws.url(url).get()
+      val url = s"http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric"
+      ws.url(url).get()
     }
 }

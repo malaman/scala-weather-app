@@ -11,8 +11,9 @@ import utils.{WeatherUtils}
 
 @Singleton
 class WeatherForecastController @Inject() (
+  cc: ControllerComponents,
   weatherForecastService: WeatherForecastService
-) extends Controller {
+) extends AbstractController(cc) {
 
   def getForecastForCity(cityID: String) = Action.async {request =>
     val cityID = request.getQueryString("id").mkString
@@ -36,8 +37,7 @@ class WeatherForecastController @Inject() (
               Ok(Json.toJson(result))
             }
           )
-        }
-        case _ => BadRequest("{\"error\": \"Network error\"}")
+        }        
     }
   }
 }

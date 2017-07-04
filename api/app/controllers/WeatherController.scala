@@ -13,9 +13,10 @@ import utils.{WeatherUtils}
 
 @Singleton
 class WeatherController @Inject() (
+    cc: ControllerComponents,
     citiesService: CitiesService,
     weatherService: WeatherService
-) extends Controller {
+) extends AbstractController(cc) {
 
     def getWeatherForCity(city: String) = Action.async { implicit request =>
       val city = request.getQueryString("city").mkString

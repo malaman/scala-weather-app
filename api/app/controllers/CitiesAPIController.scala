@@ -7,7 +7,10 @@ import javax.inject.{Inject, Singleton}
 import services.CitiesService
 
 @Singleton
-class CitiesAPIController @Inject() (citiesService: CitiesService) extends Controller {
+class CitiesAPIController @Inject() (
+  cc: ControllerComponents,
+  citiesService: CitiesService
+  ) extends AbstractController(cc) {
   def getCitySuggestions(city: String) = Action.async { request =>
     val city = request.getQueryString("city").mkString
     val citiesFuture = citiesService.getCities(city);
@@ -15,7 +18,6 @@ class CitiesAPIController @Inject() (citiesService: CitiesService) extends Contr
       case response => {
         Ok(response.body)
       }
-      case _ => BadRequest("{\"error\": \"City suggestions response error\"}")
     }
     }
 }

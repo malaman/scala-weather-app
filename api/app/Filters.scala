@@ -3,8 +3,6 @@ import play.api._
 import play.api.http.HttpFilters
 import play.filters.cors.CORSFilter
 
-import filters.ExampleFilter
-
 /**
  * This class configures filters that run on every request. This
  * class is queried by Play to get a list of filters.
@@ -20,8 +18,7 @@ import filters.ExampleFilter
  */
 @Singleton
 class Filters @Inject() (
-  env: Environment,
-  exampleFilter: ExampleFilter,
+  env: Environment,  
   corsFilter: CORSFilter
 ) extends HttpFilters {
 
@@ -29,7 +26,7 @@ class Filters @Inject() (
     // Use the example filter if we're running development mode. If
     // we're running in production or test mode then don't use any
     // filters at all.
-    if (env.mode == Mode.Dev) Seq(exampleFilter, corsFilter) else Seq(corsFilter)
+    if (env.mode == Mode.Dev) Seq(corsFilter) else Seq(corsFilter)
   }
 
 }
