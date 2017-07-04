@@ -39,13 +39,13 @@ class WeatherController @Inject() (
         f map { results => {
           var list = new ListBuffer[WeatherResponse]
           results.map { result => {
-						val resp = Json.parse(result.body)
+            val resp = Json.parse(result.body)
             val jsresp = (resp).validate[WeatherResponse]
             jsresp.fold (
               err => BadRequest("{\"error\": \"Weather response validation error\"}"),
               weath => list += weath
             )
-        	}
+          }
           }
         Ok(Json.toJson(list.toList))
       }

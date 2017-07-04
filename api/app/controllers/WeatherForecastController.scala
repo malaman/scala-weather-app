@@ -37,7 +37,7 @@ class WeatherForecastController @Inject() (
               Ok(Json.toJson(result))
             }
           )
-        }        
+        }
     }
   }
 }
