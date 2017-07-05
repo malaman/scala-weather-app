@@ -7,7 +7,7 @@
 GET   /weather              controllers.WeatherController.getWeatherForCity(city="")
 GET   /forecast             controllers.WeatherForecastController.getForecastForCity(id="")
 
-GET   /cities               controllers.CitiesAPIController.getCitySuggestions(city="")
+GET   /cities               controllers.CitiesAPIController.getCitySuggestions()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
