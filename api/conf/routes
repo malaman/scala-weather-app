@@ -4,8 +4,8 @@
 
 
 #Add custom API
-GET   /weather              controllers.WeatherController.getWeatherForCity(city="")
-GET   /forecast             controllers.WeatherForecastController.getForecastForCity(id="")
+GET   /weather              controllers.WeatherController.getWeatherForCity()
+GET   /forecast             controllers.WeatherForecastController.getForecastForCity()
 
 GET   /cities               controllers.CitiesAPIController.getCitySuggestions()
 

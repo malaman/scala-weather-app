@@ -1,6 +1,5 @@
 package services
 
-import javax.inject._
 import javax.inject.{Inject, Singleton}
 import play.api.libs.ws._
 import scala.concurrent._

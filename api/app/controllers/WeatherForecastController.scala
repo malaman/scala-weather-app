@@ -15,7 +15,7 @@ class WeatherForecastController @Inject() (
   weatherForecastService: WeatherForecastService
 ) extends AbstractController(cc) {
 
-  def getForecastForCity(cityID: String) = Action.async {request =>
+  def getForecastForCity() = Action.async {request =>
     val cityID = request.getQueryString("id").mkString
     val forecastFuture = weatherForecastService.getForecast(cityID)
     forecastFuture.map {

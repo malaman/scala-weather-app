@@ -21,7 +21,7 @@ object WeatherUtils {
     if (a.isEmpty) {
       return (0, 0)
     }
-    a.foldLeft((a(0), a(0))) { 
+    a.foldLeft((a(0), a(0))) {
       case ((min, max), e) => (math.min(min, e), math.max(max, e))
     }
   }

@@ -13,8 +13,6 @@ import play.filters.cors.CORSFilter
  * the `application.conf` configuration file.
  *
  * @param env Basic environment settings for the current application.
- * @param exampleFilter A demonstration filter that adds a header to
- * each response.
  */
 @Singleton
 class Filters @Inject() (

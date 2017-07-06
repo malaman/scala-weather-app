@@ -7,7 +7,7 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 scalaVersion := "2.12.1"
 
 libraryDependencies += guice
-libraryDependencies += cache
+libraryDependencies += cacheApi
 libraryDependencies += ws
 libraryDependencies += filters
 libraryDependencies += "org.xerial" % "sqlite-jdbc" % "3.18.0"

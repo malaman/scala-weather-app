@@ -19,13 +19,10 @@ case class Rain (
 )
 
 object Rain {
-  implicit val writes: Writes[Rain] = (
-    (JsPath \ "three_h").write[Option[Float]].contramap((f: Rain) => f.three_h)
-  )
+  implicit val writes: Writes[Rain] = (JsPath \ "three_h").write[Option[Float]].contramap((f: Rain) => f.three_h)
 
-  implicit val reads: Reads[Rain] = (
-    (JsPath \ "3h").readNullable[Float].map(Rain.apply _)
-  )
+
+  implicit val reads: Reads[Rain] = (JsPath \ "3h").readNullable[Float].map(Rain.apply _)
 }
 
 case class ForecastWeather (
