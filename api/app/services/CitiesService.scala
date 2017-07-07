@@ -1,9 +1,9 @@
 package services
 
 import javax.inject.{Inject, Singleton}
-import play.api.libs.ws._
 import scala.concurrent._
 import scala.util.Properties
+import play.api.libs.ws._
 
 @Singleton
 class CitiesService (ws: WSClient, baseUrl: String) {

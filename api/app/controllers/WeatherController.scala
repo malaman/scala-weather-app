@@ -13,17 +13,15 @@ class WeatherController @Inject() (
     weatherService: WeatherService
 )(implicit ec: ExecutionContext) extends AbstractController(cc) {
 
-    def getWeatherForCity() = Action.async { implicit request =>
-      val city = request.getQueryString("city").mkString
-      val citiesFuture = citiesService.getCities(city)
-      weatherService.getWeatherForCity(citiesFuture).map {
-        case resp => {
-          val err = resp \ "error"
-          err match {
-            case err: JsDefined => BadRequest(resp)
-            case _ => Ok(resp)
-          }
-        }
+  def getWeatherForCity() = Action.async { implicit request =>
+    val city = request.getQueryString("city").mkString
+    val citiesFuture = citiesService.getCities(city)
+    weatherService.getWeatherForCity(citiesFuture).map(resp => {
+      val err = resp \ "error"
+      err match {
+        case err: JsDefined => BadRequest(resp)
+        case _ => Ok(resp)
       }
+    })
   }
 }

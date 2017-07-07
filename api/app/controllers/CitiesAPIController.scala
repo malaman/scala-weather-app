@@ -12,13 +12,9 @@ class CitiesAPIController @Inject() (
   citiesService: CitiesService
   ) extends AbstractController(cc) {
 
-  def getCitySuggestions() = Action.async { request =>
+  def getCitySuggestions() = Action.async { implicit request =>
     val city = request.getQueryString("city").mkString
-    val citiesFuture = citiesService.getCities(city);
-    citiesFuture.map {
-      case response => {
-        Ok(response.body)
-      }
-    }
-    }
+    val citiesFuture = citiesService.getCities(city)
+    citiesFuture.map(response => Ok(response.body))
+  }
 }
