@@ -5,8 +5,8 @@
 
 #Add custom API
 GET   /weather              controllers.WeatherController.getWeatherForCity()
+GET   /single-weather       controllers.WeatherController.getSingleWeatherForCity()
 GET   /forecast             controllers.WeatherForecastController.getForecastForCity()
-
 GET   /cities               controllers.CitiesAPIController.getCitySuggestions()
 
 # Map static resources from the /public folder to the /assets URL path

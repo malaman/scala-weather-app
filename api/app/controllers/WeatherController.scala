@@ -24,4 +24,9 @@ class WeatherController @Inject() (
       }
     })
   }
+
+  def getSingleWeatherForCity() = Action.async { implicit request =>
+    val city = request.getQueryString("city").mkString
+    weatherService.getWeather(city).map(resp => Ok(resp.body))
+  }
 }
