@@ -8,13 +8,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import io.circe.generic.auto._
 import io.circe.parser.decode
 
-import japgolly.scalajs.react.extra._
 import japgolly.scalajs.react.extra.router._
 import japgolly.scalajs.react.vdom.html_<^._
-import japgolly.scalajs.react._
 
-import diode.Action
-import weatherApp.diode.{AppCircuit, AppModel, AppState, GetWeatherForecast}
+import weatherApp.diode.{AppCircuit, GetWeatherForecast}
 import weatherApp.pages.{WeatherPage, CityPage}
 import weatherApp.config.{Config}
 import weatherApp.models.{WeatherForecastResponse}
@@ -32,8 +29,8 @@ object AppRouter {
       | staticRoute(root, HomeRoute) ~> renderR(renderWeatherPage)
       | dynamicRouteCT(("city" / string(".*") / int).caseClass[CityRoute]) ~> dynRenderR(renderCityPage)
     )
-    .notFound(redirectToPage(HomeRoute)(Redirect.Replace))
-    .renderWith(layout)
+      .notFound(redirectToPage(HomeRoute)(Redirect.Replace))
+      .renderWith(layout)
   }
 
   def renderWeatherPage(ctl: RouterCtl[Page]) = {

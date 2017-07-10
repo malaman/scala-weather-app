@@ -17,7 +17,6 @@ object WeatherBox {
     weather: Option[WeatherResponse],
     ctl: RouterCtl[AppRouter.Page]
   )
-
   val Component = ScalaComponent.builder[Props]("WeatherBox")
     .render($ => {
       if ($.props.weather.isDefined) {

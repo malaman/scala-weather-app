@@ -9,8 +9,9 @@ module.exports = {
     path.resolve(__dirname, 'target/scala-2.12/weather-app-opt.js')
   ],
   output: {
-    path: path.resolve(__dirname, 'build'),
-    filename: 'bundle.js'
+    path: path.resolve(__dirname, 'build/assets'),
+    filename: 'bundle.js',
+    publicPath: '/assets/'
   },
   module: {
     loaders: [
@@ -65,23 +66,16 @@ module.exports = {
   },
   plugins: [
     new uglifyJsPlugin({
-      compress: {
-        warnings: false
-      }
+      compress: false
     }),
     new HtmlPlugin(Object.assign({
       template: 'assets/index.html',
-      filename: 'index.html'
+      filename: '../index.html'
     })),
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify('production')
       }
-    }),
-    new CopyWebpackPlugin([
-      {
-        from: 'assets/index.html'
-      }
-    ])
+    })
   ]
 };
