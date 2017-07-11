@@ -1,7 +1,7 @@
 package utils
 
 import models.{WeatherForecastResponse, ForecastWeather, DailyForecast, Weather}
-import com.github.nscala_time.time.Imports.{DateTime}
+import com.github.nscala_time.time.Imports.DateTime
 import scala.collection.mutable.Map
 
 case class ForecastWeatherWithDay(forecastWeather: ForecastWeather, day: Int)
@@ -21,7 +21,7 @@ object WeatherUtils {
     if (a.isEmpty) {
       return (0, 0)
     }
-    a.foldLeft((a(0), a(0))) {
+    a.foldLeft((a.head, a.head)) {
       case ((min, max), e) => (math.min(min, e), math.max(max, e))
     }
   }
@@ -35,9 +35,8 @@ object WeatherUtils {
       else
         dayWeather(id) = 1
     })
-    val (id, value) = dayWeather.maxBy { case (key, value) => value }
-    val option = list.filter(_.forecastWeather.weather.head.id == id)
-      .headOption
+    val (id, _) = dayWeather.maxBy { case (_, value) => value }
+    val option = list.find(_.forecastWeather.weather.head.id == id)
     if (option.isDefined)
       option.get.forecastWeather.weather.head
     else

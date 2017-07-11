@@ -15,10 +15,15 @@ import utils.WeatherUtils
 class WeatherForecastService (ws: WSClient, baseUrl: String)(implicit ec: ExecutionContext) {
   @Inject() def this (ws: WSClient, ec: ExecutionContext) = this(ws, "http://api.openweathermap.org")(ec)
 
-  val API_KEY = Properties.envOrElse("WEATHER_API_KEY", "WEATHER_API_KEY")
+  val API_KEY: String = Properties.envOrElse("WEATHER_API_KEY", "WEATHER_API_KEY")
 
   def getForecast(cityID: String): Future[WSResponse] = {
-    val url = s"${baseUrl}/data/2.5/forecast?id=${cityID}&appid=${API_KEY}&units=metric"
+    val url = s"$baseUrl/data/2.5/forecast?id=$cityID&appid=$API_KEY&units=metric"
+    ws.url(url).get()
+  }
+
+  def getForecastByCityName(cityName: String): Future[WSResponse] = {
+    val url = s"$baseUrl/data/2.5/forecast?q=$cityName&appid=$API_KEY&units=metric"
     ws.url(url).get()
   }
 
@@ -26,9 +31,9 @@ class WeatherForecastService (ws: WSClient, baseUrl: String)(implicit ec: Execut
     val forecastFuture = getForecast(id)
     forecastFuture.map(response => {
       val resp = Json.parse(response.body)
-      val jsresp = (resp).validate[WeatherForecastResponse]
+      val jsresp = resp.validate[WeatherForecastResponse]
       jsresp.fold(
-        errors => Json.obj("error" -> "Forecast validation error"),
+        err => Json.obj("error" -> err.toString()),
         forecast => {
           val daily = WeatherUtils.getDailyWeather(forecast)
           val result = WeatherForecast(
