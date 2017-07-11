@@ -27,7 +27,7 @@ class WeatherServiceSpec extends PlaySpec {
             resp => {
               resp.head.id must be (2950159)
               resp.head.name must be ("Berlin")
-              assert(resp.head.main.temp - 17.49 < 0.001)
+              assert(resp.head.main.temp - 17.49 < Fixtures.Eps)
             }
           )
         }

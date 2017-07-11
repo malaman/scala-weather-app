@@ -17,7 +17,7 @@ class WeatherForecastService (ws: WSClient, baseUrl: String)(implicit ec: Execut
 
   val API_KEY: String = Properties.envOrElse("WEATHER_API_KEY", "WEATHER_API_KEY")
 
-  def getForecast(cityID: String): Future[WSResponse] = {
+  def getForecastByCityID(cityID: String): Future[WSResponse] = {
     val url = s"$baseUrl/data/2.5/forecast?id=$cityID&appid=$API_KEY&units=metric"
     ws.url(url).get()
   }
@@ -27,8 +27,8 @@ class WeatherForecastService (ws: WSClient, baseUrl: String)(implicit ec: Execut
     ws.url(url).get()
   }
 
-  def getForecastForCity(id: String): Future[JsValue] = {
-    val forecastFuture = getForecast(id)
+  def getForecastForCityByID(id: String): Future[JsValue] = {
+    val forecastFuture = getForecastByCityID(id)
     forecastFuture.map(response => {
       val resp = Json.parse(response.body)
       val jsresp = resp.validate[WeatherForecastResponse]

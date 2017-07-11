@@ -21,7 +21,7 @@ class WeatherForecastController @Inject() (
 
   def getForecastForCity() = Action.async { implicit request =>
     val cityID = request.getQueryString("id").mkString
-    weatherForecastService.getForecastForCity(cityID).map(resp => {
+    weatherForecastService.getForecastForCityByID(cityID).map(resp => {
       val err = resp \ "error"
       err match {
         case err: JsDefined => BadRequest(resp)
