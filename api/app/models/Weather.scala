@@ -52,8 +52,8 @@ object Clouds {
 
 case class Sys (
   country: String,
-  sunrise: Int,
-  sunset: Int
+  sunrise: Option[Int],
+  sunset: Option[Int]
 )
 
 object Sys {
@@ -63,7 +63,7 @@ object Sys {
 case class WeatherResponse (
   id: Int,
   coord: Coord = Coord(0, 0),
-  weather: Array[Weather],
+  weather: List[Weather],
   main: Main,
   visibility: Option[Int],
   wind: Wind,
@@ -74,4 +74,15 @@ case class WeatherResponse (
 
 object WeatherResponse {
   implicit val f = Json.format[WeatherResponse]
+}
+
+case class FindWeatherResponse (
+  message: String,
+  cod: String,
+  count: Int,
+  list: List[WeatherResponse]
+)
+
+object FindWeatherResponse {
+  implicit val f = Json.format[FindWeatherResponse]
 }

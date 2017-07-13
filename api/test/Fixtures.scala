@@ -2,11 +2,12 @@ import play.api.mvc.Results
 import play.api.test.Helpers.stubControllerComponents
 
 object ActionMocks {
-  def getCities() = stubControllerComponents().actionBuilder {
-    Results.Ok(Fixtures.cities)
-  }
+
   def getWeather() = stubControllerComponents().actionBuilder {
     Results.Ok(Fixtures.weatherResponse)
+  }
+  def getWeatherList() = stubControllerComponents().actionBuilder {
+    Results.Ok(Fixtures.findWeatherResponse)
   }
   def getWeatherForecast() = stubControllerComponents().actionBuilder {
     Results.Ok(Fixtures.forecastResponse)
@@ -15,223 +16,196 @@ object ActionMocks {
 
 object Fixtures {
   val Eps = 1e-3
-  val cities: String =
+  val findWeatherResponse: String =
     """
-      |  {
-      |  "predictions": [
+      |{
+      |  "message": "like",
+      |  "cod": "200",
+      |  "count": 5,
+      |  "list": [
       |    {
-      |      "description": "Berlin, Germany",
-      |      "id": "6b1afbd7fcf2ec16ff8e2f95514e2badb8c2451d",
-      |      "matched_substrings": [
-      |        {
-      |          "length": 6,
-      |          "offset": 0
-      |        }
-      |      ],
-      |      "place_id": "ChIJAVkDPzdOqEcRcDteW0YgIQQ",
-      |      "reference": "CjQnAAAAaThJzP1zUd4lgdJhAoK2-XHIcRZIR80lF7NUxiIEiP5z8YYp6mC_Vmz3eQ-IqP-LEhAXLP0gevUuBhev1nvQSbhRGhTi6mL7K1ilaRTV7NFjbyVqq6oM6Q",
-      |      "structured_formatting": {
-      |        "main_text": "Berlin",
-      |        "main_text_matched_substrings": [
-      |          {
-      |            "length": 6,
-      |            "offset": 0
-      |          }
-      |        ],
-      |        "secondary_text": "Germany"
+      |      "id": 2950159,
+      |      "name": "Berlin",
+      |      "coord": {
+      |        "lat": 52.5244,
+      |        "lon": 13.4105
       |      },
-      |      "terms": [
+      |      "main": {
+      |        "temp": 14,
+      |        "pressure": 1018,
+      |        "humidity": 71,
+      |        "temp_min": 14,
+      |        "temp_max": 14
+      |      },
+      |      "dt": 1499928600,
+      |      "wind": {
+      |        "speed": 6.2,
+      |        "deg": 280
+      |      },
+      |      "sys": {
+      |        "country": "DE"
+      |      },
+      |      "rain": null,
+      |      "snow": null,
+      |      "clouds": {
+      |        "all": 75
+      |      },
+      |      "weather": [
       |        {
-      |          "offset": 0,
-      |          "value": "Berlin"
-      |        },
-      |        {
-      |          "offset": 8,
-      |          "value": "Germany"
+      |          "id": 803,
+      |          "main": "Clouds",
+      |          "description": "broken clouds",
+      |          "icon": "04d"
       |        }
-      |      ],
-      |      "types": [
-      |        "locality",
-      |        "political",
-      |        "geocode"
       |      ]
       |    },
       |    {
-      |      "description": "Berlin Central Station, Europaplatz, Berlin, Germany",
-      |      "id": "3f3350651fb1e3cc1a50e6cd5ed15adb106feb96",
-      |      "matched_substrings": [
-      |        {
-      |          "length": 6,
-      |          "offset": 0
-      |        }
-      |      ],
-      |      "place_id": "ChIJe-ff-71RqEcRqvy8lRR4PHo",
-      |      "reference": "ClRCAAAA3ybC5N-OxIn-DO-HqC2EhwfbLrAotMmnrn8OPF6gIGff_WdvD_jLgJxz-6iFwAQM0YwBaExEdGXvmFhMZkcWmqb2zrAHv18XAG-hUapMnNwSELNZ6XfnPB37SZA-ChoHCAgaFJE9iXzd1CBPnXBJARm7qigqaFEB",
-      |      "structured_formatting": {
-      |        "main_text": "Berlin Central Station",
-      |        "main_text_matched_substrings": [
-      |          {
-      |            "length": 6,
-      |            "offset": 0
-      |          }
-      |        ],
-      |        "secondary_text": "Europaplatz, Berlin, Germany"
+      |      "id": 2950158,
+      |      "name": "Berlin",
+      |      "coord": {
+      |        "lat": 54.0333,
+      |        "lon": 10.45
       |      },
-      |      "terms": [
+      |      "main": {
+      |        "temp": 14.51,
+      |        "pressure": 1019,
+      |        "humidity": 71,
+      |        "temp_min": 14,
+      |        "temp_max": 15
+      |      },
+      |      "dt": 1499928600,
+      |      "wind": {
+      |        "speed": 3.1,
+      |        "deg": 270
+      |      },
+      |      "sys": {
+      |        "country": "DE"
+      |      },
+      |      "rain": null,
+      |      "snow": null,
+      |      "clouds": {
+      |        "all": 75
+      |      },
+      |      "weather": [
       |        {
-      |          "offset": 0,
-      |          "value": "Berlin Central Station"
-      |        },
-      |        {
-      |          "offset": 24,
-      |          "value": "Europaplatz"
-      |        },
-      |        {
-      |          "offset": 37,
-      |          "value": "Berlin"
-      |        },
-      |        {
-      |          "offset": 45,
-      |          "value": "Germany"
+      |          "id": 803,
+      |          "main": "Clouds",
+      |          "description": "broken clouds",
+      |          "icon": "04d"
       |        }
-      |      ],
-      |      "types": [
-      |        "transit_station",
-      |        "point_of_interest",
-      |        "establishment",
-      |        "geocode"
       |      ]
       |    },
       |    {
-      |      "description": "Berlin, CT, United States",
-      |      "id": "d0d699323eb7794c8ffcac9564c22df4dd863c11",
-      |      "matched_substrings": [
-      |        {
-      |          "length": 6,
-      |          "offset": 0
-      |        }
-      |      ],
-      |      "place_id": "ChIJTzAUu0i054kRAznGlquL7Zw",
-      |      "reference": "CkQxAAAAp_dYeYcqItrZI-2AK_S5MGT7uAE2c3eOldkJ-EQDkPMECUXhV7eLsMKW7eYvfVIiiWK57PkzP2EsG0IxSKLPdhIQCOau83ngD3yToKfylt4i7xoUb6Io_Op6zFKuKyDcC3Ari1F3BNw",
-      |      "structured_formatting": {
-      |        "main_text": "Berlin",
-      |        "main_text_matched_substrings": [
-      |          {
-      |            "length": 6,
-      |            "offset": 0
-      |          }
-      |        ],
-      |        "secondary_text": "CT, United States"
+      |      "id": 3587266,
+      |      "name": "Berlin",
+      |      "coord": {
+      |        "lat": 13.5,
+      |        "lon": -88.5334
       |      },
-      |      "terms": [
+      |      "main": {
+      |        "temp": 24,
+      |        "pressure": 1012,
+      |        "humidity": 94,
+      |        "temp_min": 24,
+      |        "temp_max": 24
+      |      },
+      |      "dt": 1499928600,
+      |      "wind": {
+      |        "speed": 1
+      |      },
+      |      "sys": {
+      |        "country": "SV"
+      |      },
+      |      "rain": null,
+      |      "snow": null,
+      |      "clouds": {
+      |        "all": 20
+      |      },
+      |      "weather": [
       |        {
-      |          "offset": 0,
-      |          "value": "Berlin"
-      |        },
-      |        {
-      |          "offset": 8,
-      |          "value": "CT"
-      |        },
-      |        {
-      |          "offset": 12,
-      |          "value": "United States"
+      |          "id": 801,
+      |          "main": "Clouds",
+      |          "description": "few clouds",
+      |          "icon": "02n"
       |        }
-      |      ],
-      |      "types": [
-      |        "locality",
-      |        "political",
-      |        "geocode"
       |      ]
       |    },
       |    {
-      |      "description": "Berlin Turnpike, Berlin, CT, United States",
-      |      "id": "2747a9d2af2ed5af3341ee13719e35425917f278",
-      |      "matched_substrings": [
-      |        {
-      |          "length": 6,
-      |          "offset": 0
-      |        }
-      |      ],
-      |      "place_id": "EipCZXJsaW4gVHVybnBpa2UsIEJlcmxpbiwgQ1QsIFVuaXRlZCBTdGF0ZXM",
-      |      "reference": "CjQuAAAAvxUvktR4IjWq_KAgoXudTyHkn_K7B1YRLdRI4FrcdsL9_v_8TLrSybCMq_VITtm6EhD6gV-9CHgeyhUlMxvcAJ-lGhTZKp8TfGHaX5AvZ4tGQsoFTZzzSQ",
-      |      "structured_formatting": {
-      |        "main_text": "Berlin Turnpike",
-      |        "main_text_matched_substrings": [
-      |          {
-      |            "length": 6,
-      |            "offset": 0
-      |          }
-      |        ],
-      |        "secondary_text": "Berlin, CT, United States"
+      |      "id": 3614789,
+      |      "name": "Berlin",
+      |      "coord": {
+      |        "lat": 14.8333,
+      |        "lon": -88.5
       |      },
-      |      "terms": [
+      |      "main": {
+      |        "temp": 18.67,
+      |        "pressure": 949.55,
+      |        "humidity": 96,
+      |        "temp_min": 18.67,
+      |        "temp_max": 18.67,
+      |        "sea_level": 1027.37,
+      |        "grnd_level": 949.55
+      |      },
+      |      "dt": 1499931001,
+      |      "wind": {
+      |        "speed": 0.88,
+      |        "deg": 229.502
+      |      },
+      |      "sys": {
+      |        "country": "HN"
+      |      },
+      |      "rain": null,
+      |      "snow": null,
+      |      "clouds": {
+      |        "all": 32
+      |      },
+      |      "weather": [
       |        {
-      |          "offset": 0,
-      |          "value": "Berlin Turnpike"
-      |        },
-      |        {
-      |          "offset": 17,
-      |          "value": "Berlin"
-      |        },
-      |        {
-      |          "offset": 25,
-      |          "value": "CT"
-      |        },
-      |        {
-      |          "offset": 29,
-      |          "value": "United States"
+      |          "id": 802,
+      |          "main": "Clouds",
+      |          "description": "scattered clouds",
+      |          "icon": "03n"
       |        }
-      |      ],
-      |      "types": [
-      |        "route",
-      |        "geocode"
       |      ]
       |    },
       |    {
-      |      "description": "Berlin, MD, United States",
-      |      "id": "fd76e128442b7f1e64025e1c8a423cc18e244ccb",
-      |      "matched_substrings": [
-      |        {
-      |          "length": 6,
-      |          "offset": 0
-      |        }
-      |      ],
-      |      "place_id": "ChIJlaa_MaUmuYkRrBvqEfEZjp4",
-      |      "reference": "CkQxAAAAEY0ye6MbP9LqgcP8FF2espoRUZ2zbdz5aS4qFwQFpIv3S2JB-vcQc9pW0SiJxVnTRPWDjIHSW9K1cablw4HJ0RIQBd_f4dXpklz4pcIKQw9NphoU7AUTTpJEaVArCbbnVKpz2nUoh1s",
-      |      "structured_formatting": {
-      |        "main_text": "Berlin",
-      |        "main_text_matched_substrings": [
-      |          {
-      |            "length": 6,
-      |            "offset": 0
-      |          }
-      |        ],
-      |        "secondary_text": "MD, United States"
+      |      "id": 4348460,
+      |      "name": "Berlin",
+      |      "coord": {
+      |        "lat": 38.3226,
+      |        "lon": -75.2177
       |      },
-      |      "terms": [
+      |      "main": {
+      |        "temp": 26.75,
+      |        "pressure": 1018,
+      |        "humidity": 88,
+      |        "temp_min": 26,
+      |        "temp_max": 28
+      |      },
+      |      "dt": 1499928840,
+      |      "wind": {
+      |        "speed": 2.6,
+      |        "deg": 230
+      |      },
+      |      "sys": {
+      |        "country": "US"
+      |      },
+      |      "rain": null,
+      |      "snow": null,
+      |      "clouds": {
+      |        "all": 1
+      |      },
+      |      "weather": [
       |        {
-      |          "offset": 0,
-      |          "value": "Berlin"
-      |        },
-      |        {
-      |          "offset": 8,
-      |          "value": "MD"
-      |        },
-      |        {
-      |          "offset": 12,
-      |          "value": "United States"
+      |          "id": 800,
+      |          "main": "Clear",
+      |          "description": "sky is clear",
+      |          "icon": "01n"
       |        }
-      |      ],
-      |      "types": [
-      |        "locality",
-      |        "political",
-      |        "geocode"
       |      ]
       |    }
-      |  ],
-      |  "status": "OK"
-      |  }
-      |
+      |  ]
+      |}
     """.stripMargin
   val weatherResponse: String =
     """

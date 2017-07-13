@@ -30,8 +30,8 @@ case class Clouds (
 
 case class Sys (
   country: String,
-  sunrise: Int,
-  sunset: Int
+  sunrise: Option[Int],
+  sunset: Option[Int]
 )
 
 case class WeatherResponse (

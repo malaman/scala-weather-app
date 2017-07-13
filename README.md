@@ -10,8 +10,6 @@ Tech stack:
 
  Following external services are used:
   - http://openweathermap.org/
-  - Google maps API
-
 
  ## frontend
 
@@ -27,9 +25,9 @@ Tech stack:
 
 1. Clone repository
 2. `cd api`
-3. `WEATHER_API_KEY=<YOUR_OPENWEATHERMAP_API_KEY> GOOGLE_API_KEY=<YOU_GOOGLE_MAPS_API_KEY> sbt run`.
+3. `WEATHER_API_KEY=<YOUR_OPENWEATHERMAP_API_KEY> sbt run`.
 
- [http://openweathermap.org](http://openweathermap.org/) and [Google Map API key](https://developers.google.com/maps/documentation/javascript/get-api-key) are required to start backend. It is also possible to use backend from demo application
+ [http://openweathermap.org](http://openweathermap.org/) is required to start backend. It is also possible to use backend from demo application
 (http://ec2-52-59-160-108.eu-central-1.compute.amazonaws.com:9000)
 
 ## frontend
@@ -49,7 +47,7 @@ If you want to use backend from demo application (`http://ec2-52-59-160-108.eu-c
 
 - [x] Integrate scalajs-react router into the application (use separate route for weather in selected city)
 
-- [ ] Add diod [https://github.com/suzaku-io/diode](https://github.com/suzaku-io/diode) package to frontend project for store management
+- [x] Add diod [https://github.com/suzaku-io/diode](https://github.com/suzaku-io/diode) package to frontend project for store management
 
 - [ ] Save selected cities in browsers localStorage
 

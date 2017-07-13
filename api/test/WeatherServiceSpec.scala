@@ -1,4 +1,4 @@
-import services.{CitiesService, WeatherService}
+import services.WeatherService
 import org.scalatestplus.play._
 import play.core.server.Server
 import play.api.routing.sird._
@@ -13,21 +13,18 @@ class WeatherServiceSpec extends PlaySpec {
   "WeatherService" should {
     "getWeatherForCity return an Array of Weather Response objects" in {
       Server.withRouter() {
-        case GET(p"/maps/api/place/autocomplete/json") => ActionMocks.getCities()
-        case GET(p"/data/2.5/weather") => ActionMocks.getWeather()
+        case GET(p"/data/2.5/find") => ActionMocks.getWeatherList()
       } { implicit port =>
         WsTestClient.withClient { client =>
-          val citiesService = new CitiesService(client, "")
           val weatherService = new WeatherService(client, "")
-          val citiesFuture = citiesService.getCities("Some")
-          val result = Await.result(weatherService.getWeatherForCity(citiesFuture), 10.seconds)
+          val result = Await.result(weatherService.getWeatherForCity("some"), 10.seconds)
           val jsresp = result.validate[List[WeatherResponse]]
           jsresp fold (
             err => fail,
             resp => {
               resp.head.id must be (2950159)
               resp.head.name must be ("Berlin")
-              assert(resp.head.main.temp - 17.49 < Fixtures.Eps)
+              assert(math.abs(resp.head.main.temp - 14) < Fixtures.Eps)
             }
           )
         }

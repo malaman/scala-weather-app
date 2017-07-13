@@ -13,8 +13,8 @@ import japgolly.scalajs.react.vdom.html_<^._
 
 import weatherApp.diode.{AppCircuit, GetWeatherForecast}
 import weatherApp.pages.{WeatherPage, CityPage}
-import weatherApp.config.{Config}
-import weatherApp.models.{WeatherForecastResponse}
+import weatherApp.config.Config
+import weatherApp.models.WeatherForecastResponse
 
 object AppRouter {
   sealed trait Page
@@ -34,9 +34,7 @@ object AppRouter {
   }
 
   def renderWeatherPage(ctl: RouterCtl[Page]) = {
-    connection(proxy =>
-      WeatherPage.Component(WeatherPage.Props(proxy, ctl))
-    )
+    connection(proxy => WeatherPage.Component(WeatherPage.Props(proxy, ctl)))
   }
 
   def renderCityPage(p: CityRoute, ctl: RouterCtl[Page]) = {

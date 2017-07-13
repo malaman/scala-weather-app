@@ -2,11 +2,10 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
-import models.{GoogleCity, WeatherResponse}
+import models.{FindWeatherResponse}
 import play.api.libs.json.Json
 import play.api.libs.ws._
 
-import scala.collection.mutable.ListBuffer
 import scala.concurrent._
 import scala.util.Properties
 import play.api.libs.json.JsValue
@@ -22,33 +21,19 @@ class WeatherService (ws: WSClient, baseUrl: String)(implicit ec: ExecutionConte
     ws.url(url).get()
   }
 
-  def getWeatherForCity(citiesFuture: Future[WSResponse]): Future[JsValue] = {
-    citiesFuture.flatMap(response => {
+  def getWeatherList(city: String): Future[WSResponse] = {
+    val url = s"$baseUrl/data/2.5/find?q=$city&appid=$API_KEY&units=metric&type=like"
+    ws.url(url).get()
+  }
+
+  def getWeatherForCity(city: String): Future[JsValue] = {
+    getWeatherList(city).map(response => {
       val resp = Json.parse(response.body)
-      val predictions = resp \ "predictions"
-      var futures: Seq[Future[WSResponse]] = Seq.empty[Future[WSResponse]]
-      val jsr = predictions.validate[Seq[GoogleCity]]
-      jsr.fold(
-        err => Future(Json.obj("error" -> err.toString())),
-        cities => {
-          futures = cities.map { item =>
-            getWeather(s"${item.structured_formatting.main_text},${item.structured_formatting.secondary_text}")
-          }
-        }
+      val jsresp = resp.validate[FindWeatherResponse]
+      jsresp.fold(
+        err => Json.obj("error" -> err.toString()),
+        list => Json.toJson(list.list)
       )
-      val f = Future.sequence(futures)
-      f map(results => {
-        var list = new ListBuffer[WeatherResponse]
-        results.map(result => {
-          val resp = Json.parse(result.body)
-          val jsresp = resp.validate[WeatherResponse]
-          jsresp.fold(
-            err => Json.obj("error" -> err.toString()),
-            weath => list += weath
-          )
-        })
-        Json.toJson(list.toList)
-      })
     })
   }
 }

@@ -2,15 +2,15 @@ package weatherApp.pages
 
 import scala.scalajs.js
 import js.JSConverters._
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.scalajs.js.Dynamic.{global => g}
 import scala.util.{Failure, Success}
 import scalajs.js.annotation._
 import org.scalajs.dom
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
-import japgolly.scalajs.react.extra.router.{RouterCtl}
+import japgolly.scalajs.react.extra.router.RouterCtl
 
 import io.circe.generic.auto._
 import io.circe.parser.decode
@@ -18,17 +18,17 @@ import io.circe.parser.decode
 import diode.react.ModelProxy
 import diode.Action
 
-import weatherApp.models.{WeatherResponse}
+import weatherApp.models.WeatherResponse
 import weatherApp.components.{Select, WeatherBox}
-import weatherApp.config.{Config}
-import weatherApp.router.{AppRouter}
+import weatherApp.config.Config
+import weatherApp.router.AppRouter
 import weatherApp.diode.{AppState, GetWeatherSuggestions}
 
 object WeatherPage {
   @js.native
   @JSImport("lodash.throttle", JSImport.Default)
   private object _throttle extends js.Any
-  def throttle = _throttle.asInstanceOf[js.Dynamic]
+  def throttle: js.Dynamic = _throttle.asInstanceOf[js.Dynamic]
 
   case class Props (
     proxy: ModelProxy[AppState],
@@ -38,8 +38,8 @@ object WeatherPage {
   case class State(
     var isLoading: Boolean,
     var inputValue: String,
-    var weatherData: Array[WeatherResponse],
-    var selectOptions: Array[Select.Options]
+    var weatherData: List[WeatherResponse],
+    var selectOptions: List[Select.Options]
   )
 
   class Backend($: BackendScope[Props, State]) {
@@ -48,41 +48,43 @@ object WeatherPage {
 
     private val dispatch: Action => Callback = props.proxy.dispatchCB
 
-    def getSelectOptions(data: Array[WeatherResponse], intputValue: String) = {
+    def getSelectOptions(data: List[WeatherResponse], intputValue: String) = {
       data.zipWithIndex.map { case (item, index) => new Select.Options {
-        override val value = s"${intputValue}::${index}"
-        override val label = s"${item.name}, ${item.sys.country} ${item.weather(0).main} ${(math rint item.main.temp * 10) / 10} °C"
+        override val value = s"$intputValue::$index"
+        override val label = s"${item.name}, ${item.sys.country} ${item.weather.head.main} ${(math rint item.main.temp * 10) / 10} °C"
       }
       }
     }
 
     def loadWeatherInfo(city: String): Unit = {
-      $.modState(s => {
-        s.isLoading = true
-        s
-      }).runNow()
-      val host = Config.AppConfig.apiHost
-      dom.ext.Ajax.get(url=s"${host}/weather?city=${city}")
-        .onComplete {
-          case Success(xhr) => {
-            val option = decode[Array[WeatherResponse]](xhr.responseText)
-            val weatherData = option match {
-              case Left(failure) => {
-                g.console.log(failure.toString())
-                Array.empty[WeatherResponse]
+      if (city.nonEmpty) {
+        $.modState(s => {
+          s.isLoading = true
+          s
+        }).runNow()
+        val host = Config.AppConfig.apiHost
+        dom.ext.Ajax.get(url=s"${host}/weather?city=${city}")
+          .onComplete {
+            case Success(xhr) => {
+              val option = decode[List[WeatherResponse]](xhr.responseText)
+              val weatherData = option match {
+                case Left(failure) => {
+                  g.console.log(failure.toString())
+                  List.empty[WeatherResponse]
+                }
+                case Right(data) => data
               }
-              case Right(data) => data
+              dispatch(GetWeatherSuggestions(weatherData)).runNow()
+              $.modState(s => {
+                s.isLoading = false
+                s.weatherData = weatherData
+                s.selectOptions = getSelectOptions(weatherData, s.inputValue)
+                s
+              }).runNow()
             }
-            dispatch(GetWeatherSuggestions(weatherData)).runNow()
-            $.modState(s => {
-              s.isLoading = false
-              s.weatherData = weatherData
-              s.selectOptions = getSelectOptions(weatherData, s.inputValue)
-              s
-            }).runNow()
-            }
-          case Failure(xhr) => {}
-        }
+            case Failure(xhr) => {}
+          }
+      }
     }
 
     def throttleInputValueChange(): js.Dynamic = {
@@ -110,15 +112,15 @@ object WeatherPage {
     }
 
     def onSelectChange(option: Select.Options) = {
-      var selectedValue = try {
-        Some(option.value);
+      val selectedValue = try {
+        Some(option.value)
       } catch {
         case e: Exception => None : Option[String]
       }
       $.modState(s => {
         s.inputValue = selectedValue.getOrElse("")
         if (s.inputValue == "") {
-          s.selectOptions = Array.empty[Select.Options]
+          s.selectOptions = List.empty[Select.Options]
         }
         s
       }).runNow()
@@ -166,8 +168,8 @@ object WeatherPage {
       .initialState(State(
         isLoading = false,
         inputValue = "",
-        weatherData = Array.empty[WeatherResponse],
-        selectOptions = Array.empty[Select.Options]
+        weatherData = List.empty[WeatherResponse],
+        selectOptions = List.empty[Select.Options]
       ))
       .renderBackend[Backend]
       .build

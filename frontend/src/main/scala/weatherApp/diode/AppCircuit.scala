@@ -8,7 +8,7 @@ import weatherApp.models.{WeatherResponse, WeatherForecastResponse}
 object AppCircuit extends Circuit[AppModel] with ReactConnector[AppModel] {
   def initialModel = AppModel(
     AppState(
-      Array.empty[WeatherResponse],
+      List.empty[WeatherResponse],
       None: Option[WeatherForecastResponse]
     )
   )
