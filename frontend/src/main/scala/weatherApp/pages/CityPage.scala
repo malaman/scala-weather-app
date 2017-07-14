@@ -1,27 +1,16 @@
 package weatherApp.pages
 
-import scala.scalajs.js
-import org.scalajs.dom
-
 import diode.react.ModelProxy
-import diode.Action
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.scalajs.js.Dynamic.{global => g}
-import scala.util.{Failure, Success}
 
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
-import japgolly.scalajs.react.extra.router.{RouterCtl}
+import japgolly.scalajs.react.extra.router.RouterCtl
 
-import io.circe.generic.auto._
-import io.circe.parser.decode
-
-import weatherApp.router.{AppRouter}
-import weatherApp.models.{WeatherForecastResponse}
-import weatherApp.config.{Config}
-import weatherApp.diode.{AppState}
-import weatherApp.components.{WeatherForecastBox}
+import weatherApp.router.AppRouter
+import weatherApp.models.WeatherForecastResponse
+import weatherApp.diode.AppState
+import weatherApp.components.{WeatherForecastBox, DailyForecastBox}
 
 object CityPage {
   case class State(
@@ -41,12 +30,17 @@ object CityPage {
     private val props = $.props.runNow()
 
     def getForecastBoxes(forecast: WeatherForecastResponse) = {
-      forecast.list.map(item => {
+      forecast.list.map(item =>
         WeatherForecastBox.Component.withKey(item.dt)(
           WeatherForecastBox.Props(item)
         )
-      })
+      )
+    }
 
+    def getDailyForecastBoxes(forecast: WeatherForecastResponse) = {
+      forecast.daily.map(item =>
+        DailyForecastBox.Component.withKey(item.day)(DailyForecastBox.Props(item))
+      )
     }
 
     def render(props: Props, state: State): VdomElement = {
@@ -55,18 +49,22 @@ object CityPage {
       if (forecastOption.isDefined) {
         val forecast = forecastOption.get
         val Box = WeatherForecastBox.Component(
-          WeatherForecastBox.Props(forecast.list(0))
+          WeatherForecastBox.Props(forecast.list.head)
         )
         return <.div(
           <.div(
             ^.fontWeight := "bold",
             ^.marginBottom := 15.px,
-            s"${forecast.city.name}, ${forecast.city.country}",
+            s"${forecast.city.name}, ${forecast.city.country}"
           ),
           <.div(
             ^.display := "flex",
             ^.overflowY := "scroll",
             getForecastBoxes(forecast).toVdomArray
+          ),
+          <.div(
+            ^.border := "1px solid black",
+            getDailyForecastBoxes(forecast).toVdomArray
           )
         )
       }

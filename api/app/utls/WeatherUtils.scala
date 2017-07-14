@@ -8,13 +8,13 @@ case class ForecastWeatherWithDay(forecastWeather: ForecastWeather, day: Int)
 
 object WeatherUtils {
   private def getForecastWithDays(list: List[ForecastWeather]) = {
-    var days = Set.empty[Int]
+    var days = List.empty[Int]
     val forecastListWithDay = list.map(item => {
-      val day = new DateTime(item.dt * 1000L).dayOfWeek.get           
-      days = days + day
+      val day: Int = new DateTime(item.dt * 1000L).dayOfWeek.get
+      days =  if (days.contains(day)) days else days :+ day
       ForecastWeatherWithDay(item, day)
     })
-    (days.toList, forecastListWithDay)    
+    (days, forecastListWithDay)
   }
 
   private def minMax(a: List[Float]) : (Float, Float) = {
@@ -47,11 +47,12 @@ object WeatherUtils {
    */
   def getDailyWeather(forecast: WeatherForecastResponse): List[DailyForecast] = {
     val (days, listWithDays) = getForecastWithDays(forecast.list)
+    println(days)
     days.map(day => {
       val listForDay = listWithDays.filter(_.day == day)
       val (temp_min, temp_max) = minMax(listForDay.map(_.forecastWeather.main.temp))
       val weather = getWeatherForDay(listForDay)
       DailyForecast(day, weather, temp_min, temp_max)
-    }).sortBy(_.day)
+    })
   }
 }
