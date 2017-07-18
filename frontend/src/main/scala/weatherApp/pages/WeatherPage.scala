@@ -22,7 +22,7 @@ import weatherApp.models.WeatherResponse
 import weatherApp.components.{Select, WeatherBox}
 import weatherApp.config.Config
 import weatherApp.router.AppRouter
-import weatherApp.diode.{AppState, GetWeatherSuggestions}
+import weatherApp.diode.{AppState, GetWeatherSuggestions, SelectWeather}
 
 object WeatherPage {
   @js.native
@@ -39,7 +39,8 @@ object WeatherPage {
     var isLoading: Boolean,
     var inputValue: String,
     var weatherData: List[WeatherResponse],
-    var selectOptions: List[Select.Options]
+    var selectOptions: List[Select.Options],
+    var selectedWeather: Option[WeatherResponse]
   )
 
   class Backend($: BackendScope[Props, State]) {
@@ -63,7 +64,7 @@ object WeatherPage {
           s
         }).runNow()
         val host = Config.AppConfig.apiHost
-        dom.ext.Ajax.get(url=s"${host}/weather?city=${city}")
+        dom.ext.Ajax.get(url=s"$host/weather?city=$city")
           .onComplete {
             case Success(xhr) => {
               val option = decode[List[WeatherResponse]](xhr.responseText)
@@ -121,7 +122,14 @@ object WeatherPage {
         s.inputValue = selectedValue.getOrElse("")
         if (s.inputValue == "") {
           s.selectOptions = List.empty[Select.Options]
+          s.selectedWeather = None: Option[WeatherResponse]
+
+        } else {
+          val arr = option.value.split("::")
+          val index = if (arr.length == 2) arr(1).toInt else -1
+          s.selectedWeather = if (index == -1) None else Some(s.weatherData(index))
         }
+        dispatch(SelectWeather(s.selectedWeather)).runNow()
         s
       }).runNow()
     }
@@ -139,13 +147,6 @@ object WeatherPage {
           pIsLoading = s.isLoading
         )
       )()
-      val boxProps = try {
-        val arr = s.inputValue.split("::")
-        val index = if (arr.length == 2) arr(1).toInt else -1
-        if (index == -1) None else Some(weatherData(index))
-      } catch {
-        case e: Exception => None
-      }
       <.div(
         ^.margin := "0 auto",
         ^.className := "weather-page",
@@ -158,7 +159,7 @@ object WeatherPage {
             select
         ),
         <.div(
-          WeatherBox.Component(WeatherBox.Props(boxProps, p.ctl))
+          WeatherBox.Component(WeatherBox.Props(s.selectedWeather, p.ctl))
         )
       )
     }
@@ -169,7 +170,8 @@ object WeatherPage {
         isLoading = false,
         inputValue = "",
         weatherData = List.empty[WeatherResponse],
-        selectOptions = List.empty[Select.Options]
+        selectOptions = List.empty[Select.Options],
+        selectedWeather = None : Option[WeatherResponse]
       ))
       .renderBackend[Backend]
       .build

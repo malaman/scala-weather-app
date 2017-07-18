@@ -10,12 +10,11 @@ import japgolly.scalajs.react.extra.router.RouterCtl
 import weatherApp.router.AppRouter
 import weatherApp.models.WeatherForecastResponse
 import weatherApp.diode.AppState
-import weatherApp.components.{WeatherForecastBox, DailyForecastBox}
+import weatherApp.components.{WeatherForecastBox, DailyForecastBox, CityPageHeader}
 
 object CityPage {
   case class State(
-    var isLoading: Boolean,
-    var forecast: Option[WeatherForecastResponse]
+    var isLoading: Boolean
   )
 
   case class Props(
@@ -45,7 +44,8 @@ object CityPage {
 
     def render(props: Props, state: State): VdomElement = {
       val proxy = props.proxy()
-      val forecastOption= proxy.forecast
+      val forecastOption = proxy.forecast
+      val weatherOption = proxy.selectedWeather
       if (forecastOption.isDefined) {
         val forecast = forecastOption.get
         val Box = WeatherForecastBox.Component(
@@ -53,9 +53,9 @@ object CityPage {
         )
         return <.div(
           <.div(
-            ^.fontWeight := "bold",
-            ^.marginBottom := 15.px,
-            s"${forecast.city.name}, ${forecast.city.country}"
+            CityPageHeader(
+              CityPageHeader.Props(s"${forecast.city.name}, ${forecast.city.country}", weatherOption)
+            )
           ),
           <.div(
             ^.display := "flex",
@@ -74,8 +74,7 @@ object CityPage {
 
   val Component = ScalaComponent.builder[Props]("CityPage")
     .initialState(State(
-      isLoading = false,
-      forecast = None : Option[WeatherForecastResponse]
+      isLoading = false
     ))
     .renderBackend[Backend]
     .build
