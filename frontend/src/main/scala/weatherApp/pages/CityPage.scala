@@ -1,22 +1,20 @@
 package weatherApp.pages
 
-import diode.react.ModelProxy
-
-
+import scala.concurrent.ExecutionContext.Implicits.global
+import org.scalajs.dom
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
 import japgolly.scalajs.react.extra.router.RouterCtl
-
+import diode.react.ModelProxy
+import io.circe.parser.decode
+import io.circe.generic.auto._
 import weatherApp.router.AppRouter
 import weatherApp.models.WeatherForecastResponse
-import weatherApp.diode.AppState
-import weatherApp.components.{WeatherForecastBox, DailyForecastBox, CityPageHeader}
+import weatherApp.diode._
+import weatherApp.components.{CityPageHeader, DailyForecastBox, WeatherForecastBox}
+import weatherApp.config.Config
 
 object CityPage {
-  case class State(
-    var isLoading: Boolean
-  )
-
   case class Props(
     proxy: ModelProxy[AppState],
     id: Int,
@@ -24,7 +22,7 @@ object CityPage {
     ctl: RouterCtl[AppRouter.Page]
   )
 
-  class Backend($: BackendScope[Props, State]) {
+  class Backend($: BackendScope[Props, Unit]) {
 
     private val props = $.props.runNow()
 
@@ -42,7 +40,25 @@ object CityPage {
       )
     }
 
-    def render(props: Props, state: State): VdomElement = {
+    def mounted: Callback = {
+      val host = Config.AppConfig.apiHost
+      Callback {
+        AppCircuit.dispatch(ClearForecast())
+        AppCircuit.dispatch(SetLoadingState())
+      } >>
+      Callback {
+        dom.ext.Ajax.get(url=s"$host/forecast?id=${props.id}").map(xhr => {
+          val option = decode[WeatherForecastResponse](xhr.responseText)
+          option match {
+            case Left(failure) => Callback.log(failure.toString()).runNow()
+            case Right(data) => AppCircuit.dispatch(GetWeatherForecast(Some(data)))
+          }
+          AppCircuit.dispatch(ClearLoadingState())
+        })
+      }
+    }
+
+    def render(props: Props): VdomElement = {
       val proxy = props.proxy()
       val forecastOption = proxy.forecast
       val weatherOption = proxy.selectedWeather
@@ -73,9 +89,7 @@ object CityPage {
   }
 
   val Component = ScalaComponent.builder[Props]("CityPage")
-    .initialState(State(
-      isLoading = false
-    ))
-    .renderBackend[Backend]
-    .build
+      .renderBackend[Backend]
+      .componentDidMount(scope => scope.backend.mounted)
+      .build
 }

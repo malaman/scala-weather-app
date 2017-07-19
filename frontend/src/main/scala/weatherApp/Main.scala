@@ -23,12 +23,17 @@ object Main extends JSApp {
   @js.native
   object WeatherIcons extends js.Any
 
+  @JSImport("weather-icons/css/weather-icons-wind.min.css", JSImport.Namespace)
+  @js.native
+  object WeatherIconsWind extends js.Any
+
   def require(): Unit = {
     WebpackRequire.React
     WebpackRequire.ReactDOM
     Normalize
     CSS
     WeatherIcons
+    WeatherIconsWind
   }
 
   override def main(): Unit = {

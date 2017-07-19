@@ -1,4 +1,4 @@
-package weatherApp.components
+  package weatherApp.components
 
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
@@ -16,6 +16,7 @@ object CityPageHeader {
         ^.display := "flex",
         ^.flexDirection := "row",
         ^.justifyContent := "space-between",
+        ^.alignItems := "center",
         ^.maxWidth := 400.px,
         ^.fontSize := 15.px,
         ^.marginBottom := 15.px,
@@ -32,6 +33,7 @@ object CityPageHeader {
           ^.display := "flex",
           ^.justifyContent := "center",
           ^.alignItems := "center",
+          ^.flexWrap := "wrap",
           <.div(
             ^.className := s"wi $iconStr",
             ^.marginRight := "10px",
@@ -40,7 +42,12 @@ object CityPageHeader {
           ),
           <.div(
             weather.weather.head.main
+          ),
+          <.div(
+            ^.marginLeft := 15.px,
+            WindInformation(WindInformation.Props(weather))
           )
+
         )
       )
     } else {
@@ -50,7 +57,6 @@ object CityPageHeader {
         props.city
       )
     }
-
   })
 
   def apply(props: Props) = Component(props)

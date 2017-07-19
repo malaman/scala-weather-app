@@ -2,12 +2,11 @@ package weatherApp.pages
 
 import scala.scalajs.js
 import js.JSConverters._
-import scala.scalajs.js.Dynamic.{global => g}
-import scala.util.{Failure, Success}
 import scalajs.js.annotation._
 import org.scalajs.dom
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
 import japgolly.scalajs.react.extra.router.RouterCtl
@@ -45,7 +44,7 @@ object WeatherPage {
 
   class Backend($: BackendScope[Props, State]) {
 
-    private val props = $.props.runNow()
+    private val props = $.props.map(props => Props(props.proxy, props.ctl)).runNow()
 
     private val dispatch: Action => Callback = props.proxy.dispatchCB
 
@@ -57,41 +56,48 @@ object WeatherPage {
       }
     }
 
-    def loadWeatherInfo(city: String): Unit = {
-      if (city.nonEmpty) {
-        $.modState(s => {
-          s.isLoading = true
-          s
-        }).runNow()
-        val host = Config.AppConfig.apiHost
-        dom.ext.Ajax.get(url=s"$host/weather?city=$city")
-          .onComplete {
-            case Success(xhr) => {
-              val option = decode[List[WeatherResponse]](xhr.responseText)
-              val weatherData = option match {
-                case Left(failure) => {
-                  g.console.log(failure.toString())
-                  List.empty[WeatherResponse]
-                }
-                case Right(data) => data
-              }
-              dispatch(GetWeatherSuggestions(weatherData)).runNow()
+    def loadWeatherInfo(city: String): Callback = {
+      val host = Config.AppConfig.apiHost
+      val setLoading = $.modState(s => {
+        s.isLoading = true
+        s
+      })
+
+      val getData = CallbackTo[Future[List[WeatherResponse]]] {
+        dom.ext.Ajax.get(url=s"$host/weather?city=$city").map(xhr => {
+          val option = decode[List[WeatherResponse]](xhr.responseText)
+          option match {
+            case Left(failure) => {
+              Callback.log(failure.toString())
+              List.empty[WeatherResponse]
+            }
+            case Right(data) => data
+          }
+        })
+      }
+
+
+      val updateState = (weatherData: Future[List[WeatherResponse]]) => Callback {
+        weatherData.map(weather => {
+            dispatch(GetWeatherSuggestions(weather)).runNow()
               $.modState(s => {
                 s.isLoading = false
-                s.weatherData = weatherData
-                s.selectOptions = getSelectOptions(weatherData, s.inputValue)
+                s.weatherData = weather
+                s.selectOptions = getSelectOptions(weather, s.inputValue)
                 s
               }).runNow()
-            }
-            case Failure(xhr) => {}
-          }
+          })
       }
+
+      setLoading >> getData >>= updateState
     }
 
     def throttleInputValueChange(): js.Dynamic = {
       throttle(() => {
         val city = $.state.runNow().inputValue
-        loadWeatherInfo(city)
+        if (city.nonEmpty) {
+          loadWeatherInfo(city).runNow()
+        }
       }, 400)
     }
 
