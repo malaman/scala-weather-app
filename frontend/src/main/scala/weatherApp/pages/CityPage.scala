@@ -88,6 +88,8 @@ object CityPage {
           ),
           <.div(
             ^.height := 400.px,
+            ^.width := "100%",
+            ^.marginTop := 10.px,
             GoogleMaps(forecast.city.coord.lat, forecast.city.coord.lon, 10,
               MapMarker.Component
                 .withRawProp("lat", forecast.city.coord.lat)

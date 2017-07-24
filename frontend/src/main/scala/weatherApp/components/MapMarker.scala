@@ -10,13 +10,11 @@ object MapMarker {
     <.div(
       ^.title := "Map Marker",
       <.img(
-        ^.width := 30.px,
-        ^.height := 20.px,
+        ^.width := 60.px,
         ^.src := "/images/marker.png"
       )
     )
   })
-
 
   def apply(props: js.Dynamic) = Component(props)
 }
