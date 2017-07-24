@@ -1,17 +1,20 @@
 package weatherApp.pages
 
+import scala.scalajs.js
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.scalajs.dom
+
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
 import japgolly.scalajs.react.extra.router.RouterCtl
 import diode.react.ModelProxy
 import io.circe.parser.decode
 import io.circe.generic.auto._
+
 import weatherApp.router.AppRouter
 import weatherApp.models.WeatherForecastResponse
 import weatherApp.diode._
-import weatherApp.components.{CityPageHeader, DailyForecastBox, WeatherForecastBox}
+import weatherApp.components.{CityPageHeader, DailyForecastBox, GoogleMaps, MapMarker, WeatherForecastBox}
 import weatherApp.config.Config
 
 object CityPage {
@@ -67,6 +70,7 @@ object CityPage {
         val Box = WeatherForecastBox.Component(
           WeatherForecastBox.Props(forecast.list.head)
         )
+
         return <.div(
           <.div(
             CityPageHeader(
@@ -81,6 +85,17 @@ object CityPage {
           <.div(
             ^.border := "1px solid black",
             getDailyForecastBoxes(forecast).toVdomArray
+          ),
+          <.div(
+            ^.height := 400.px,
+            GoogleMaps(forecast.city.coord.lat, forecast.city.coord.lon, 10,
+              MapMarker.Component
+                .withRawProp("lat", forecast.city.coord.lat)
+                .withRawProp("lng", forecast.city.coord.lon)
+                (
+                  js.Dynamic.literal(lat = forecast.city.coord.lat, lng = forecast.city.coord.lon)
+                )
+            )
           )
         )
       }

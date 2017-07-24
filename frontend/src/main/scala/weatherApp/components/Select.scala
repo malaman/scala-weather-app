@@ -20,6 +20,10 @@ object Select {
     val label: String
   }
 
+  object Options {
+    def apply(value: String, label: String) =  js.Dynamic.literal(value = value, label = label).asInstanceOf[Options]
+  }
+
   @ScalaJSDefined
   trait Props extends js.Object {
     val name: String
@@ -42,13 +46,21 @@ object Select {
     pIsLoading: Boolean = false
   ): Props = {
     new Props {
-      override val name = pName
-      override val options = pOptions
-      override val value = pValue
-      override val onInputChange = pOnInputChange
-      override val onChange = pOnChange
-      override val isLoading = pIsLoading
-      override val backspaceRemoves = false
+      val name = pName
+      val options = pOptions
+      val value = pValue
+      val onInputChange = pOnInputChange
+      val onChange = pOnChange
+      val isLoading = pIsLoading
+      val backspaceRemoves = false
     }
   }
+
+  def apply(    pName: String,
+                pOptions: js.Array[Options],
+                pValue: String,
+                pOnInputChange: js.Function1[String, Unit],
+                pOnChange: js.Function1[Options, Unit],
+                pIsLoading: Boolean = false
+           ) = Component(props(pName, pOptions, pValue, pOnInputChange, pOnChange, pIsLoading))()
 }

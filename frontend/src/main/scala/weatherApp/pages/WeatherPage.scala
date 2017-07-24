@@ -49,11 +49,10 @@ object WeatherPage {
     private val dispatch: Action => Callback = props.proxy.dispatchCB
 
     def getSelectOptions(data: List[WeatherResponse], intputValue: String) = {
-      data.zipWithIndex.map { case (item, index) => new Select.Options {
-        override val value = s"$intputValue::$index"
-        override val label = s"${item.name}, ${item.sys.country} ${item.weather.head.main} ${(math rint item.main.temp * 10) / 10} °C"
-      }
-      }
+      data.zipWithIndex.map { case (item, index) => Select.Options(
+        value = s"$intputValue::$index",
+        label = s"${item.name}, ${item.sys.country} ${item.weather.head.main} ${(math rint item.main.temp * 10) / 10} °C"
+      )}
     }
 
     def loadWeatherInfo(city: String): Callback = {
@@ -143,16 +142,14 @@ object WeatherPage {
     def render(p: Props, s: State) = {
       val proxy = p.proxy()
       val weatherData = proxy.weatherSuggestions
-      val select = Select.Component(
-        Select.props(
-          "form-field-name",
-          s.selectOptions.toJSArray,
-          s.inputValue,
-          onInputValueChange,
-          onSelectChange,
-          pIsLoading = s.isLoading
-        )
-      )()
+      val select = Select(
+        "form-field-name",
+        s.selectOptions.toJSArray,
+        s.inputValue,
+        onInputValueChange,
+        onSelectChange,
+        pIsLoading = s.isLoading
+      )
       <.div(
         ^.margin := "0 auto",
         ^.className := "weather-page",
