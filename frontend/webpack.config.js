@@ -49,7 +49,7 @@ module.exports = {
         ]
       },
       {
-        test   : /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9=&.]+)?$/,
+        test   : /\.(ttf|eot|svg|woff(2)?|png)(\?[a-z0-9=&.]+)?$/,
         use : [
           {
             loader: 'file-loader',
@@ -65,7 +65,7 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.css', '.scss']
+    extensions: ['.js', '.jsx', '.css', '.scss', '.png']
   },
   externals: {
     API_HOST: process.env.API_HOST

@@ -3,8 +3,6 @@ package weatherApp.components
 import scalajs.js
 import scalajs.js.annotation._
 import japgolly.scalajs.react._
-import japgolly.scalajs.react._
-import japgolly.scalajs.react.vdom.html_<^._
 
 object GoogleMaps {
 
@@ -14,9 +12,10 @@ object GoogleMaps {
 
   @ScalaJSDefined
   trait Props extends js.Object {
-    val bootstrapURLKeys: js.Dynamic
+    val bootstrapURLKeys: js.Object
     val center: js.Array[Double]
     val zoom: Int
+    val options: js.Object
   }
 
   val Component = JsFnComponent[Props, Children.Varargs](JsComp)
@@ -28,6 +27,7 @@ object GoogleMaps {
       val bootstrapURLKeys  = js.Dynamic.literal(key=s"${k}jQWpR5TlbDWhYwp6FItvK10s")
       val center = js.Array(lat, lng)
       val zoom = z
+      val options = js.Dynamic.literal(scrollwheel = false)
     }
   }
 
