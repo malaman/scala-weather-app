@@ -8,9 +8,9 @@ import services.WeatherService
 
 @Singleton
 class WeatherController @Inject() (
-    cc: ControllerComponents,
-    weatherService: WeatherService
-)(implicit ec: ExecutionContext) extends AbstractController(cc) {
+                                    cc: ControllerComponents,
+                                    weatherService: WeatherService
+                                  )(implicit ec: ExecutionContext) extends AbstractController(cc) {
 
   def getWeatherForCity() = Action.async { implicit request =>
     val city = request.getQueryString("city").mkString

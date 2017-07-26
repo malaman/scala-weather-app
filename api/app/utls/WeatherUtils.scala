@@ -47,7 +47,6 @@ object WeatherUtils {
    */
   def getDailyWeather(forecast: WeatherForecastResponse): List[DailyForecast] = {
     val (days, listWithDays) = getForecastWithDays(forecast.list)
-    println(days)
     days.map(day => {
       val listForDay = listWithDays.filter(_.day == day)
       val (temp_min, temp_max) = minMax(listForDay.map(_.forecastWeather.main.temp))
