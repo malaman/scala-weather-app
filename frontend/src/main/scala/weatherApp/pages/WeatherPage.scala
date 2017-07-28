@@ -163,6 +163,10 @@ object WeatherPage {
         ),
         <.div(
           WeatherBox.Component(WeatherBox.Props(s.selectedWeather, p.ctl))
+        ),
+        <.a(
+          ^.href := s"${Config.AppConfig.apiHost}/authenticate",
+          "click here to authenticate"
         )
       )
     }
