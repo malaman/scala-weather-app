@@ -1566,4 +1566,39 @@ object Fixtures {
       |  }
       |}
     """.stripMargin
+  val githubUserResponse: String =
+    """
+      |{
+      |  "login": "poweruser",
+      |  "id": 12313,
+      |  "avatar_url": "https://avatars0.githubusercontent.com/u/6554653",
+      |  "gravatar_id": "",
+      |  "url": "https://api.github.com/users/poweruser",
+      |  "html_url": "https://github.com/poweruser",
+      |  "followers_url": "https://api.github.com/users/poseruser/followers",
+      |  "following_url": "https://api.github.com/users/poseruser/following{/other_user}",
+      |  "gists_url": "https://api.github.com/users/poseruser/gists{/gist_id}",
+      |  "starred_url": "https://api.github.com/users/poseruser/starred{/owner}{/repo}",
+      |  "subscriptions_url": "https://api.github.com/users/poseruser/subscriptions",
+      |  "organizations_url": "https://api.github.com/users/poseruser/orgs",
+      |  "repos_url": "https://api.github.com/users/poweruser/repos",
+      |  "events_url": "https://api.github.com/users/poweruser/events{/privacy}",
+      |  "received_events_url": "https://api.github.com/users/poseruser/received_events",
+      |  "type": "User",
+      |  "site_admin": false,
+      |  "name": "Power User",
+      |  "company": null,
+      |  "blog": "",
+      |  "location": "Berlin, Germany",
+      |  "email": null,
+      |  "hireable": true,
+      |  "bio": null,
+      |  "public_repos": 36,
+      |  "public_gists": 0,
+      |  "followers": 11,
+      |  "following": 29,
+      |  "created_at": "2014-01-31T15:05:01Z",
+      |  "updated_at": "2017-07-21T19:17:41Z"
+      |}
+    """.stripMargin
 }

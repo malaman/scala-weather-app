@@ -1,7 +1,6 @@
 package controllers
 
 import play.api.mvc._
-import play.api.libs.json._
 import scala.concurrent._
 import javax.inject.{Inject, Singleton}
 import services.AuthService
@@ -13,22 +12,18 @@ class AuthController @Inject() (
                                )(implicit ec: ExecutionContext) extends AbstractController(cc) {
 
   def authenticate() = Action { implicit request =>
-    //TODO: change hard-coded URL here
-    Redirect(s"https://github.com/login/oauth/authorize?scope=user:email&client_id=${authService.GITHUB_CLIENT_ID}&redirect_uri=http://ec2-52-59-160-108.eu-central-1.compute.amazonaws.com&response_type=code")
+    Redirect(s"https://github.com/login/oauth/authorize?scope=user:email&client_id=${authService.GITHUB_CLIENT_ID}&redirect_uri=${authService.HOST}&response_type=code")
   }
 
-  def githubCallback() = Action.async { implicit request =>
+  def getUserInfo() = Action.async { implicit request =>
+    val token: Option[String] = request.session.get("access_token").map {token => token}
     val code = request.getQueryString("code").mkString
-
-    authService.postCode(code).map { token =>
-      Ok(token).withSession("access_token" -> token)
+    authService.authenticate(token, code).map {resp =>
+      Ok(resp._1).withSession("access_token" -> resp._2)
     }
   }
 
-  def getUserInfo() = Action.async {implicit request =>
-    val token = request.session.get("access_token").map {token => token}.getOrElse("")
-    authService.getUserInfo(token).map { resp =>
-      Ok(resp)
-    }
+  def logout() = Action {implicit request =>
+    Redirect(authService.HOST).withNewSession
   }
 }

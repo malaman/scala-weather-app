@@ -2,7 +2,7 @@ package weatherApp.router
 
 import japgolly.scalajs.react.extra.router._
 import japgolly.scalajs.react.vdom.html_<^._
-import weatherApp.components.LoadingIndicator
+import weatherApp.components.{LoadingIndicator, Header}
 import weatherApp.diode.{AppCircuit}
 import weatherApp.pages.{CityPage, WeatherPage}
 
@@ -34,6 +34,10 @@ object AppRouter {
 
   def layout (c: RouterCtl[Page], r: Resolution[Page]) =
     <.div(
+      <.div(
+        ^.cls := "container",
+        Header()
+      ),
       <.div(^.cls := "container", r.render()),
       connection(proxy => LoadingIndicator(LoadingIndicator.Props(proxy)))
     )
