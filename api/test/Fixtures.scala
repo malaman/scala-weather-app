@@ -12,6 +12,12 @@ object ActionMocks {
   def getWeatherForecast() = stubControllerComponents().actionBuilder {
     Results.Ok(Fixtures.forecastResponse)
   }
+  def getGithubTokenResponse() = stubControllerComponents().actionBuilder {
+    Results.Ok(Fixtures.githubTokenResponse)
+  }
+  def getGithubUserResponse() = stubControllerComponents().actionBuilder {
+    Results.Ok(Fixtures.githubUserResponse)
+  }
 }
 
 object Fixtures {
@@ -1566,12 +1572,13 @@ object Fixtures {
       |  }
       |}
     """.stripMargin
+  val githubTokenResponse: String = "access_token=12345551233123&scope=user%3Aemail&token_type=bearer"
   val githubUserResponse: String =
     """
       |{
       |  "login": "poweruser",
       |  "id": 12313,
-      |  "avatar_url": "https://avatars0.githubusercontent.com/u/6554653",
+      |  "avatar_url": "https://avatars0.githubusercontent.com/u/116554653",
       |  "gravatar_id": "",
       |  "url": "https://api.github.com/users/poweruser",
       |  "html_url": "https://github.com/poweruser",

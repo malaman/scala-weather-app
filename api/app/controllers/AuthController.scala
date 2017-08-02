@@ -19,7 +19,7 @@ class AuthController @Inject() (
     val token: Option[String] = request.session.get("access_token").map {token => token}
     val code = request.getQueryString("code").mkString
     authService.authenticate(token, code).map {resp =>
-      Ok(resp._1).withSession("access_token" -> resp._2)
+      Ok(resp.user).withSession("access_token" -> resp.token)
     }
   }
 

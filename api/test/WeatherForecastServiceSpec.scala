@@ -12,7 +12,7 @@ import models.WeatherForecast
 
 class WeatherForecastServiceSpec extends PlaySpec {
   "WeatherForecastService" should {
-    "getForecastForCity return an WeatherForecast object" in {
+    "return an WeatherForecast object via getForecastForCity method call" in {
       Server.withRouter() {
         case GET(p"/data/2.5/forecast") => ActionMocks.getWeatherForecast()
       } { implicit port =>

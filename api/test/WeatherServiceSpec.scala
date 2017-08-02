@@ -11,7 +11,7 @@ import models.WeatherResponse
 
 class WeatherServiceSpec extends PlaySpec {
   "WeatherService" should {
-    "getWeatherForCity return an Array of Weather Response objects" in {
+    "return an Array of Weather Response objects via getWeatherForCity method call" in {
       Server.withRouter() {
         case GET(p"/data/2.5/find") => ActionMocks.getWeatherList()
       } { implicit port =>

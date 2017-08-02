@@ -12,7 +12,6 @@ import models.GithubUser
 
 import com.netaporter.uri.Uri.parse
 
-
 @Singleton
 class AuthService (ws: WSClient, baseUrl: String, baseAPIUrl: String)(implicit ec: ExecutionContext) {
   @Inject() def this (ws: WSClient, ec: ExecutionContext) = this(ws, "https://github.com", "https://api.github.com")(ec)
@@ -20,6 +19,7 @@ class AuthService (ws: WSClient, baseUrl: String, baseAPIUrl: String)(implicit e
   val HOST: String = Properties.envOrElse("HOST", "http://localhost:8080")
   val GITHUB_CLIENT_ID: String = Properties.envOrElse("GITHUB_CLIENT_ID", "GITHUB_CLIENT_ID")
   val GITHUB_CLIENT_SECRET: String = Properties.envOrElse("GITHUB_CLIENT_SECRET", "GITHUB_CLIENT_ID")
+  case class AuthResponse(user: JsValue, token: String)
 
   def postCode(code: String): Future[String] = {
     val url = s"$baseUrl/login/oauth/access_token"
@@ -52,12 +52,12 @@ class AuthService (ws: WSClient, baseUrl: String, baseAPIUrl: String)(implicit e
     })
   }
 
-  def authenticate(token: Option[String], code: String): Future[(JsValue, String)] = {
+  def authenticate(token: Option[String], code: String): Future[AuthResponse] = {
     if (token.isDefined) {
-      return getUserInfo(token.get).map {resp => (resp, token.get)}
+      return getUserInfo(token.get).map {resp => AuthResponse(resp, token.get)}
     }
     return postCode(code).flatMap { token =>
-      getUserInfo(token).map {resp => (resp, token)}
+      getUserInfo(token).map {resp => AuthResponse(resp, token)}
     }
   }
 }
