@@ -2,10 +2,9 @@ package weatherApp.router
 
 import japgolly.scalajs.react.extra.router._
 import japgolly.scalajs.react.vdom.html_<^._
-import weatherApp.components.{LoadingIndicator, Header}
-import weatherApp.diode.{AppCircuit}
+import weatherApp.components.Layout
+import weatherApp.diode.AppCircuit
 import weatherApp.pages.{CityPage, WeatherPage}
-
 
 object AppRouter {
   sealed trait Page
@@ -32,15 +31,7 @@ object AppRouter {
     connection(proxy => CityPage.Component(CityPage.Props(proxy, p.id, p.name, ctl)))
   }
 
-  def layout (c: RouterCtl[Page], r: Resolution[Page]) =
-    <.div(
-      <.div(
-        ^.cls := "container",
-        Header()
-      ),
-      <.div(^.cls := "container", r.render()),
-      connection(proxy => LoadingIndicator(LoadingIndicator.Props(proxy)))
-    )
+  def layout (c: RouterCtl[Page], r: Resolution[Page]) = Layout(Layout.Props(c, r))
 
   val baseUrl = BaseUrl.fromWindowOrigin_/
 
