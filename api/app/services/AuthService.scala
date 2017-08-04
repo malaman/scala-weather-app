@@ -8,7 +8,7 @@ import play.api.libs.json.Json
 import play.api.libs.ws._
 import play.api.libs.json.JsValue
 
-import models.GithubUser
+import models.{GithubUser, GithubToken}
 
 import com.netaporter.uri.Uri.parse
 
@@ -26,18 +26,18 @@ class AuthService (ws: WSClient, baseUrl: String, baseAPIUrl: String)(implicit e
     val data = Json.obj(
       "client_id" -> GITHUB_CLIENT_ID,
       "client_secret" -> GITHUB_CLIENT_SECRET,
-      "accept" -> "json",
       "code" -> code
     )
-    ws.url(url).post(data).map(resp => {
-      // resp example: access_token=12345551233123&scope=user%3Aemail&token_type=bearer
-      val result: Seq[(String, Option[String])] = parse(s"?${resp.body}").query.params
-      if (result.nonEmpty && result.head._1 == "access_token") {
-        result.head._2.getOrElse("")
-      } else {
-        ""
-      }
-    })
+    ws.url(url)
+        .withHttpHeaders("Accept" -> "application/json")
+        .post(data).map { response =>
+          val body = Json.parse(response.body)
+          val jsresp = body.validate[GithubToken]
+          jsresp.fold(
+            err => "",
+            token => token.access_token
+          )
+    }
   }
 
   def getUserInfo(token: String): Future[JsValue] = {
@@ -50,14 +50,5 @@ class AuthService (ws: WSClient, baseUrl: String, baseAPIUrl: String)(implicit e
         user => Json.toJson(user)
       )
     })
-  }
-
-  def authenticate(token: Option[String], code: String): Future[AuthResponse] = {
-    if (token.isDefined) {
-      return getUserInfo(token.get).map {resp => AuthResponse(resp, token.get)}
-    }
-    return postCode(code).flatMap { token =>
-      getUserInfo(token).map {resp => AuthResponse(resp, token)}
-    }
   }
 }

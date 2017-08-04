@@ -13,3 +13,11 @@ case class GithubUser(
 object GithubUser {
   implicit val f = Json.format[GithubUser]
 }
+
+case class GithubToken(
+                      access_token: String
+                      )
+
+object GithubToken {
+  implicit val f = Json.format[GithubToken]
+}

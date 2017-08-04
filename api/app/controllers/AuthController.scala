@@ -12,14 +12,25 @@ class AuthController @Inject() (
                                )(implicit ec: ExecutionContext) extends AbstractController(cc) {
 
   def authenticate() = Action { implicit request =>
-    Redirect(s"https://github.com/login/oauth/authorize?scope=user:email&client_id=${authService.GITHUB_CLIENT_ID}&redirect_uri=${authService.HOST}&response_type=code")
+    Redirect(s"https://github.com/login/oauth/authorize?scope=user:email&client_id=${authService.GITHUB_CLIENT_ID}&redirect_uri=${authService.HOST}/api/callback&response_type=code")
+  }
+
+  def callback() = Action.async { implicit request =>
+    val code = request.getQueryString("code").mkString
+    authService.postCode(code).map {token =>
+      Redirect(authService.HOST).withSession("access_token" -> token)
+    }
   }
 
   def getUserInfo() = Action.async { implicit request =>
-    val token: Option[String] = request.session.get("access_token").map {token => token}
-    val code = request.getQueryString("code").mkString
-    authService.authenticate(token, code).map {resp =>
-      Ok(resp.user).withSession("access_token" -> resp.token)
+    val tokenOption: Option[String] = request.session.get("access_token").map {token => token}
+    if (tokenOption.isDefined) {
+      val token = tokenOption.get
+      authService.getUserInfo(token).map { resp =>
+        Ok(resp).withSession("access_token" -> token)
+      }
+    } else {
+      Future(Ok("{}"))
     }
   }
 

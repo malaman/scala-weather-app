@@ -1572,7 +1572,14 @@ object Fixtures {
       |  }
       |}
     """.stripMargin
-  val githubTokenResponse: String = "access_token=12345551233123&scope=user%3Aemail&token_type=bearer"
+  val githubTokenResponse: String =
+    """
+      |{
+      | "access_token": "12345551233123a",
+      | "scope": "user%3Aemail",
+      | "token_type": "bearer"
+      |}
+    """.stripMargin
   val githubUserResponse: String =
     """
       |{
