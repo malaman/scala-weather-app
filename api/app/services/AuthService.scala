@@ -1,24 +1,35 @@
 package services
 
 import javax.inject.{Inject, Singleton}
+
 import scala.concurrent._
 import scala.util.Properties
-
 import play.api.libs.json.Json
 import play.api.libs.ws._
 import play.api.libs.json.JsValue
-
-import models.{GithubUser, GithubToken}
-
+import models.{GithubToken, GithubUser}
 import com.netaporter.uri.Uri.parse
+import play.api.{Configuration, Environment, Mode}
 
 @Singleton
-class AuthService (ws: WSClient, baseUrl: String, baseAPIUrl: String)(implicit ec: ExecutionContext) {
-  @Inject() def this (ws: WSClient, ec: ExecutionContext) = this(ws, "https://github.com", "https://api.github.com")(ec)
+class AuthService (
+                    ws: WSClient,
+                    env: Environment,
+                    configuration: Configuration,
+                    baseUrl: String,
+                    baseAPIUrl: String
+                  )(implicit ec: ExecutionContext) {
+  @Inject() def this (ws: WSClient, ec: ExecutionContext, env: Environment, configuration: Configuration) =
+    this(ws, env, configuration, "https://github.com", "https://api.github.com")(ec)
 
-  val HOST: String = Properties.envOrElse("HOST", "http://localhost:8080")
+  val HOST: String = if (env.mode == Mode.Prod)
+    configuration.underlying.getString("variables.prod_host")
+    else configuration.underlying.getString("variables.dev_host")
+  val PROD_HOST: String = configuration.underlying.getString("variables.prod_host")
+
   val GITHUB_CLIENT_ID: String = Properties.envOrElse("GITHUB_CLIENT_ID", "GITHUB_CLIENT_ID")
   val GITHUB_CLIENT_SECRET: String = Properties.envOrElse("GITHUB_CLIENT_SECRET", "GITHUB_CLIENT_ID")
+
   case class AuthResponse(user: JsValue, token: String)
 
   def postCode(code: String): Future[String] = {

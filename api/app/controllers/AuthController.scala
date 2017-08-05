@@ -1,18 +1,23 @@
 package controllers
 
 import play.api.mvc._
+
 import scala.concurrent._
 import javax.inject.{Inject, Singleton}
+
+import play.api.{Environment, Mode, Configuration}
 import services.AuthService
 
 @Singleton
 class AuthController @Inject() (
                                  cc: ControllerComponents,
-                                 authService: AuthService
+                                 authService: AuthService,
+                                 env: Environment,
+                                 configuration: Configuration
                                )(implicit ec: ExecutionContext) extends AbstractController(cc) {
 
   def authenticate() = Action { implicit request =>
-    Redirect(s"https://github.com/login/oauth/authorize?scope=user:email&client_id=${authService.GITHUB_CLIENT_ID}&redirect_uri=${authService.HOST}/api/callback&response_type=code")
+    Redirect(s"https://github.com/login/oauth/authorize?scope=user:email&client_id=${authService.GITHUB_CLIENT_ID}&redirect_uri=${authService.PROD_HOST}/api/callback&response_type=code")
   }
 
   def callback() = Action.async { implicit request =>

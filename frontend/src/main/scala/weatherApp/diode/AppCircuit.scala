@@ -2,8 +2,7 @@ package weatherApp.diode
 
 import diode._
 import diode.react.ReactConnector
-
-import weatherApp.models.{WeatherResponse, WeatherForecastResponse}
+import weatherApp.models.{GithubUser, WeatherForecastResponse, WeatherResponse}
 
 object AppCircuit extends Circuit[AppModel] with ReactConnector[AppModel] {
   def initialModel = AppModel(
@@ -11,7 +10,8 @@ object AppCircuit extends Circuit[AppModel] with ReactConnector[AppModel] {
       weatherSuggestions = List.empty[WeatherResponse],
       forecast = None: Option[WeatherForecastResponse],
       selectedWeather = None: Option[WeatherResponse],
-      isLoading = false
+      isLoading = false,
+      user = None : Option[GithubUser]
     )
   )
 
@@ -33,6 +33,7 @@ class WeatherPageHandler[M](modelRW: ModelRW[M, AppState]) extends ActionHandler
 class AppHandler[M](modelRW: ModelRW[M, AppState]) extends ActionHandler(modelRW) {
   override def handle = {
     case SetLoadingState() => updated(value.copy(isLoading = true))
-    case ClearLoadingState() =>  updated(value.copy(isLoading = false))
+    case ClearLoadingState() => updated(value.copy(isLoading = false))
+    case GetUserInfo(user) => updated(value.copy(user = user))
   }
 }

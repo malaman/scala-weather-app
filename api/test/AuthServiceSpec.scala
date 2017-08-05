@@ -1,6 +1,5 @@
 import services.AuthService
 import org.scalatestplus.play._
-
 import play.core.server.Server
 import play.api.routing.sird._
 import play.api.test._
@@ -9,15 +8,16 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import models.GithubUser
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 
-class AuthServiceSpec extends PlaySpec {
+class AuthServiceSpec extends PlaySpec with GuiceOneAppPerSuite {
   "AuthServiceSpec" should {
     "return return an access_token via postCode method call" in {
       Server.withRouter() {
         case POST(p"/login/oauth/access_token") => ActionMocks.getGithubTokenResponse()
       } { implicit port =>
         WsTestClient.withClient { client =>
-          val authService = new AuthService(client, "", "")
+          val authService = new AuthService(client, app.environment, app.configuration ,"", "")
           val result = Await.result(authService.postCode("1234"), 10.seconds)
           result must be ("12345551233123a")
         }
@@ -29,7 +29,8 @@ class AuthServiceSpec extends PlaySpec {
         case GET(p"/user") => ActionMocks.getGithubUserResponse()
       } { implicit port =>
         WsTestClient.withClient { client =>
-          val authService = new AuthService(client, "", "")
+
+          val authService = new AuthService(client, app.environment, app.configuration ,"", "")
           val resp = Await.result(authService.getUserInfo("1234"), 10.seconds)
           val jsresp = resp.validate[GithubUser]
           jsresp.fold(
