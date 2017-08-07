@@ -44,7 +44,7 @@ object WeatherPage {
 
   class Backend($: BackendScope[Props, State]) {
 
-    private val props = $.props.map(props => Props(props.proxy, props.ctl)).runNow()
+    private val props = $.props.runNow()
 
     private val dispatch: Action => Callback = props.proxy.dispatchCB
 

@@ -7,3 +7,9 @@ body {
   max-width: 800px;
   padding: 0 10px;
 }
+
+a {
+  &:active {
+    color: black;
+  }
+}
