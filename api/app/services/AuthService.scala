@@ -8,19 +8,20 @@ import play.api.libs.json.Json
 import play.api.libs.ws._
 import play.api.libs.json.JsValue
 import models.{GithubToken, GithubUser}
-import com.netaporter.uri.Uri.parse
 import play.api.{Configuration, Environment, Mode}
+import dao.GithubUserDAO
 
 @Singleton
 class AuthService (
                     ws: WSClient,
                     env: Environment,
                     configuration: Configuration,
+                    userDAO: GithubUserDAO,
                     baseUrl: String,
                     baseAPIUrl: String
                   )(implicit ec: ExecutionContext) {
-  @Inject() def this (ws: WSClient, ec: ExecutionContext, env: Environment, configuration: Configuration) =
-    this(ws, env, configuration, "https://github.com", "https://api.github.com")(ec)
+  @Inject() def this (ws: WSClient, ec: ExecutionContext, env: Environment, configuration: Configuration, userDAO: GithubUserDAO) =
+    this(ws, env, configuration, userDAO, "https://github.com", "https://api.github.com")(ec)
 
   val HOST: String = if (env.mode == Mode.Prod)
     configuration.underlying.getString("variables.prod_host")
