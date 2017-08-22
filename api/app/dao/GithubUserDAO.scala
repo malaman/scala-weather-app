@@ -12,11 +12,11 @@ import scala.concurrent.{ Future, ExecutionContext }
 
 @Singleton
 class GithubUserDAO  @Inject() (dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
-  private val dbConfig = dbConfigProvider.get[JdbcProfile]
+  val dbConfig = dbConfigProvider.get[JdbcProfile]
   import dbConfig._
   import profile.api._
 
-  private class GithubUserTable(tag: Tag) extends Table[GithubUserSlick](tag, "users") {
+  class GithubUserTable(tag: Tag) extends Table[GithubUserSlick](tag, "users") {
     implicit val dateColumnType = MappedColumnType.base[Date, Long](d => d.getTime, d => new Date(d))
 
     def id    = column[Int]("ID", O.PrimaryKey)

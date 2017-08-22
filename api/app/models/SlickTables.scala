@@ -12,3 +12,19 @@ case class GithubUserSlick (
                              created: Date,
                              updated: Option[Date] = None
                            ) extends BaseTable
+
+case class OpenWeatherCitySlick (
+                                id: Int,
+                                name: String,
+                                lon: Float,
+                                lat: Float,
+                                created: Date,
+                                updated: Option[Date] = None
+                                ) extends BaseTable
+
+case class UserCitySlick (
+                    userId: Int,
+                    cityId: Int,
+                    created: Date,
+                    updated: Option[Date] = None
+                    ) extends BaseTable
