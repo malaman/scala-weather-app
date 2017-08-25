@@ -10,7 +10,8 @@ trait BaseTable {
 case class GithubUserSlick (
                              id: Int,
                              created: Date,
-                             updated: Option[Date] = None
+                             updated: Option[Date] = None,
+                             lastLogin: Option[Date] = None
                            ) extends BaseTable
 
 case class OpenWeatherCitySlick (

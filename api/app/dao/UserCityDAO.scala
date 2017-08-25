@@ -5,9 +5,9 @@ import javax.inject.{Inject, Singleton}
 
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
-import models.UserCitySlick
+import models.{OpenWeatherCitySlick, UserCitySlick}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UserCityDAO @Inject() (
@@ -34,4 +34,14 @@ class UserCityDAO @Inject() (
     private def userFK = foreignKey("FK_USERS", userId, TableQuery[userDAO.GithubUserTable])(_.id, onDelete=ForeignKeyAction.Cascade)
     private def cityFK = foreignKey("FK_CITIES", cityId, TableQuery[cityDAO.OpenWeatherCityTable])(_.id, onDelete=ForeignKeyAction.Cascade)
   }
+
+  private val UsersCities = TableQuery[UserCityTable]
+
+  def getCitiesForUser(userId: Int): Future[Seq[OpenWeatherCitySlick]] = {
+    val query = for {
+      ((user, userCity), city) <- userDAO.Users join UsersCities on ((user, userCity) => (user.id === userCity.userId) && (user.id === userId) ) join cityDAO.Cities on (_._2.cityId === _.id)
+    } yield city
+    db.run(query.result)
+  }
+
 }

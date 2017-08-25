@@ -29,4 +29,6 @@ class OpenWeatherCityDAO @Inject() (dbConfigProvider: DatabaseConfigProvider)(im
 
     def * = (id, name, lon, lat, created, updated) <> ((OpenWeatherCitySlick.apply _).tupled, OpenWeatherCitySlick.unapply)
   }
+  val Cities = TableQuery[OpenWeatherCityTable]
+
 }

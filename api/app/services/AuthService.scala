@@ -20,7 +20,12 @@ class AuthService (
                     baseUrl: String,
                     baseAPIUrl: String
                   )(implicit ec: ExecutionContext) {
-  @Inject() def this (ws: WSClient, ec: ExecutionContext, env: Environment, configuration: Configuration, userDAO: GithubUserDAO) =
+  @Inject() def this (
+                       ws: WSClient,
+                       ec: ExecutionContext,
+                       env: Environment,
+                       configuration: Configuration,
+                       userDAO: GithubUserDAO) =
     this(ws, env, configuration, userDAO, "https://github.com", "https://api.github.com")(ec)
 
   val HOST: String = if (env.mode == Mode.Prod)
@@ -59,7 +64,10 @@ class AuthService (
       val jsresp = body.validate[GithubUser]
       jsresp.fold(
         err => Json.obj("error" -> err.toString()),
-        user => Json.toJson(user)
+        user => {
+          userDAO.saveLoggedInTime(user.id)
+          Json.toJson(user)
+        }
       )
     })
   }

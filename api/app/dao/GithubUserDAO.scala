@@ -17,22 +17,45 @@ class GithubUserDAO  @Inject() (dbConfigProvider: DatabaseConfigProvider)(implic
   import profile.api._
 
   class GithubUserTable(tag: Tag) extends Table[GithubUserSlick](tag, "users") {
-    implicit val dateColumnType = MappedColumnType.base[Date, Long](d => d.getTime, d => new Date(d))
+    implicit val myDateColumnType = MappedColumnType.base[Date, Long](
+      dt => dt.getTime,
+      ts => new Date(ts)
+    )
 
     def id    = column[Int]("ID", O.PrimaryKey)
     def created = column[Date]("CREATED")
     def updated = column[Option[Date]]("UPDATED")
+    def lastLogin = column[Option[Date]]("LAST_LOGIN")
 
-    def * = (id, created, updated) <> ((GithubUserSlick.apply _).tupled, GithubUserSlick.unapply)
+    def * = (id, created, updated, lastLogin) <> (GithubUserSlick.tupled, GithubUserSlick.unapply)
   }
 
-  private val Users = TableQuery[GithubUserTable]
+  val Users = TableQuery[GithubUserTable]
 
   def create(user: GithubUser): Future[Unit] = {
     val newUser = GithubUserSlick(id = user.id, created = new Date())
     db.run(Users += newUser)
       .map { _ => () }
       .recover { case ex: Throwable => println("Error occured when inserting user", ex)}
+  }
+
+  def update(user: GithubUserSlick): Future[Int] = {
+    val query = Users.filter(_.id === user.id).update(user)
+    db.run(query)
+  }
+
+  def get(id: Int): Future[GithubUserSlick] = {
+    val query = Users.filter(_.id === id)
+    db.run(query.result).map(users => users.head)
+  }
+
+
+  def saveLoggedInTime(userId: Int): Future[Int] = {
+    implicit val myDateColumnType = MappedColumnType.base[Date, Long](dt => dt.getTime, ts => new Date(ts))
+    val query = Users.filter(_.id === userId)
+      .map(user => user.lastLogin)
+      .update(Some(new Date()))
+    db.run(query)
   }
 
   def list(): Future[Seq[GithubUserSlick]] = db.run(Users.result)
