@@ -57,18 +57,21 @@ class AuthService (
     }
   }
 
-  def getUserInfo(token: String): Future[JsValue] = {
-    val url = s"$baseAPIUrl/user?access_token=$token"
-    ws.url(url).get().map(response => {
+  private def getInfoFromGithub(url: String): Future[Option[GithubUser]] = ws.url(url).get()
+    .map { response =>
       val body = Json.parse(response.body)
       val jsresp = body.validate[GithubUser]
-      jsresp.fold(
-        err => Json.obj("error" -> err.toString()),
-        user => {
-          userDAO.saveLoggedInTime(user.id)
-          Json.toJson(user)
-        }
-      )
-    })
+      jsresp.fold(err => None, user => Some(user))
+    }
+
+  def getUserInfo(token: String): Future[JsValue] = {
+    val url = s"$baseAPIUrl/user?access_token=$token"
+
+    for {
+      userOption <- getInfoFromGithub(url)
+      _ <- userDAO.upsert(userOption)
+    } yield {
+      if (userOption.isDefined) Json.toJson(userOption.get) else Json.obj("error" -> "getUserInfo error")
+    }
   }
 }
