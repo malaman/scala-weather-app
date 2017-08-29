@@ -7,9 +7,9 @@ import scala.util.Properties
 import play.api.libs.json.Json
 import play.api.libs.ws._
 import play.api.libs.json.JsValue
-import models.{GithubToken, GithubUser}
+import models.{GithubToken, GithubUser, UserResponse}
 import play.api.{Configuration, Environment, Mode}
-import dao.GithubUserDAO
+import dao.{GithubUserDAO, UserCityDAO}
 
 @Singleton
 class AuthService (
@@ -17,6 +17,7 @@ class AuthService (
                     env: Environment,
                     configuration: Configuration,
                     userDAO: GithubUserDAO,
+                    userCityDAO: UserCityDAO,
                     baseUrl: String,
                     baseAPIUrl: String
                   )(implicit ec: ExecutionContext) {
@@ -25,8 +26,10 @@ class AuthService (
                        ec: ExecutionContext,
                        env: Environment,
                        configuration: Configuration,
-                       userDAO: GithubUserDAO) =
-    this(ws, env, configuration, userDAO, "https://github.com", "https://api.github.com")(ec)
+                       userDAO: GithubUserDAO,
+                       userCityDAO: UserCityDAO
+                     ) =
+    this(ws, env, configuration, userDAO, userCityDAO, "https://github.com", "https://api.github.com")(ec)
 
   val HOST: String = if (env.mode == Mode.Prod)
     configuration.underlying.getString("variables.prod_host")
@@ -66,12 +69,12 @@ class AuthService (
 
   def getUserInfo(token: String): Future[JsValue] = {
     val url = s"$baseAPIUrl/user?access_token=$token"
-
     for {
       userOption <- getInfoFromGithub(url)
       _ <- userDAO.upsert(userOption)
+      cities <- userCityDAO.getCitiesForUser(userOption.get.id) if userOption.isDefined
     } yield {
-      if (userOption.isDefined) Json.toJson(userOption.get) else Json.obj("error" -> "getUserInfo error")
+      if (userOption.isDefined) Json.toJson(UserResponse(userOption.get, cities)) else Json.obj("error" -> "getUserInfo error")
     }
   }
 }

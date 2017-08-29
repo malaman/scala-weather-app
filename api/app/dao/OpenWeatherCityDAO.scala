@@ -31,4 +31,22 @@ class OpenWeatherCityDAO @Inject() (dbConfigProvider: DatabaseConfigProvider)(im
   }
   val Cities = TableQuery[OpenWeatherCityTable]
 
+  def setup(): Future[Unit] = db.run(Cities.schema.create)
+
+  def get(id: Int): Future[Option[OpenWeatherCitySlick]] = {
+    val query = Cities.filter(_.id === id)
+    db.run(query.result).map(cities => cities.headOption)
+  }
+
+  def upsert(cityToAdd: OpenWeatherCitySlick): Future[Int] = {
+    get(cityToAdd.id).flatMap(cityOption => {
+      val city = cityOption.getOrElse(cityToAdd).copy(updated = Some(new Date()))
+      db.run(Cities.insertOrUpdate(city))
+        .recover { case ex: Throwable =>
+          println("Error occured when updating city", ex)
+          -1
+        }
+    })
+  }
+
 }

@@ -37,11 +37,37 @@ class UserCityDAO @Inject() (
 
   private val UsersCities = TableQuery[UserCityTable]
 
+  def setup(): Future[Unit] = db.run(UsersCities.schema.create)
+
+  def get(userId: Int, cityId: Int): Future[Option[UserCitySlick]] = {
+    val query = UsersCities.filter(userCity => userCity.userId === userId && userCity.cityId === cityId)
+    db.run(query.result).map(usersCities => usersCities.headOption)
+  }
+
   def getCitiesForUser(userId: Int): Future[Seq[OpenWeatherCitySlick]] = {
     val query = for {
       ((user, userCity), city) <- userDAO.Users join UsersCities on ((user, userCity) => (user.id === userCity.userId) && (user.id === userId) ) join cityDAO.Cities on (_._2.cityId === _.id)
     } yield city
     db.run(query.result)
+  }
+
+  def upsert(userId: Int, cityId: Int): Future[Int] = {
+    get(userId, cityId).flatMap(userCityOption => {
+      val newUserCity = UserCitySlick(userId, cityId, new Date())
+      val userCity = userCityOption.getOrElse(newUserCity).copy(updated = Some(new Date()))
+      db.run(UsersCities.insertOrUpdate(userCity))
+        .recover { case ex: Throwable =>
+          println("Error occured when updating user_city table", ex)
+          -1
+        }
+    })
+  }
+
+  def upsertCityForUser(city: OpenWeatherCitySlick, userId: Int): Future[Int] = {
+    for {
+      _ <- cityDAO.upsert(city)
+      result <- upsert(userId, city.id)
+    } yield result
   }
 
 }

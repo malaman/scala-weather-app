@@ -23,3 +23,13 @@ case class GithubToken(
 object GithubToken {
   implicit val f = Json.format[GithubToken]
 }
+
+
+case class UserResponse (
+                          user: GithubUser,
+                          cities: Seq[OpenWeatherCitySlick]
+                        )
+
+object UserResponse {
+  implicit val f = Json.format[UserResponse]
+}

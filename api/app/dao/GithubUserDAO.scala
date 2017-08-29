@@ -32,27 +32,39 @@ class GithubUserDAO  @Inject() (dbConfigProvider: DatabaseConfigProvider)(implic
 
   val Users = TableQuery[GithubUserTable]
 
-  def upsert(githubUserOption: Option[GithubUser]): Future[Unit] = {
-    if (githubUserOption.isDefined) {
-      val githubUser = githubUserOption.get
-      return get(githubUser.id).map(userOption => {
-        val newUser = GithubUserSlick(id = githubUser.id, created = new Date())
-        val user = userOption.getOrElse(newUser).copy(lastLogin = Some(new Date()))
-        db.run(Users.insertOrUpdate(user))
-          .recover { case ex: Throwable => println("Error occured when updating user", ex)}
-      })
-    }
-    Future()
+  def setup(): Future[Unit] = db.run(Users.schema.create)
+
+  def get(id: Int): Future[Option[GithubUserSlick]] = {
+    val query = Users.filter(_.id === id)
+    db.run(query.result)
+      .map(users => users.headOption)
+      .recover { case ex: Throwable =>
+        println("Error occured when getting a user", ex)
+        None
+      }
   }
+
+  def list(): Future[Seq[GithubUserSlick]] = db.run(Users.result)
 
   def update(user: GithubUserSlick): Future[Int] = {
     val query = Users.filter(_.id === user.id).update(user)
     db.run(query)
   }
 
-  def get(id: Int): Future[Option[GithubUserSlick]] = {
-    val query = Users.filter(_.id === id)
-    db.run(query.result).map(users => users.headOption)
+  def upsert(githubUserOption: Option[GithubUser]): Future[Int] = {
+    if (githubUserOption.isDefined) {
+      val githubUser = githubUserOption.get
+      return get(githubUser.id).flatMap(userOption => {
+        val newUser = GithubUserSlick(id = githubUser.id, created = new Date())
+        val user = userOption.getOrElse(newUser).copy(lastLogin = Some(new Date()))
+        db.run(Users.insertOrUpdate(user))
+          .recover { case ex: Throwable =>
+            println("Error occured when updating user", ex)
+            -1
+          }
+      })
+    }
+    Future(-1)
   }
 
   def saveLoggedInTime(userId: Int): Future[Int] = {
@@ -63,5 +75,4 @@ class GithubUserDAO  @Inject() (dbConfigProvider: DatabaseConfigProvider)(implic
     db.run(query)
   }
 
-  def list(): Future[Seq[GithubUserSlick]] = db.run(Users.result)
 }
