@@ -9,7 +9,7 @@ import japgolly.scalajs.react.vdom.html_<^._
 import weatherApp.config.Config
 import weatherApp.diode.AppCircuit.connect
 import weatherApp.diode.{AppCircuit, ClearLoadingState, GetUserInfo, SetLoadingState}
-import weatherApp.models.GithubUser
+import weatherApp.models.UserResponse
 import weatherApp.router.AppRouter.Page
 import io.circe.parser.decode
 import io.circe.generic.auto._
@@ -31,10 +31,10 @@ object Layout {
         dom.ext.Ajax
           .get(url=s"$host/user-info", withCredentials=true)
           .map {xhr =>
-            val option = decode[GithubUser](xhr.responseText)
+            val option = decode[UserResponse](xhr.responseText)
             option match {
               case Left(failure) => None
-              case Right(data) => AppCircuit.dispatch(GetUserInfo(Some(data)))
+              case Right(data) => AppCircuit.dispatch(GetUserInfo(Some(data.user)))
             }
             AppCircuit.dispatch(ClearLoadingState())
           }

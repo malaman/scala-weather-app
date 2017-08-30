@@ -7,7 +7,7 @@ import scala.util.Properties
 import play.api.libs.json.Json
 import play.api.libs.ws._
 import play.api.libs.json.JsValue
-import models.{GithubToken, GithubUser, UserResponse}
+import models.{GithubToken, GithubUser, OpenWeatherBaseCity, UserResponse}
 import play.api.{Configuration, Environment, Mode}
 import dao.{GithubUserDAO, UserCityDAO}
 
@@ -74,7 +74,8 @@ class AuthService (
       _ <- userDAO.upsert(userOption)
       cities <- userCityDAO.getCitiesForUser(userOption.get.id) if userOption.isDefined
     } yield {
-      if (userOption.isDefined) Json.toJson(UserResponse(userOption.get, cities)) else Json.obj("error" -> "getUserInfo error")
+      val baseCities = cities.map(city => OpenWeatherBaseCity(city.id, city.name, city.lon, city.lat))
+      if (userOption.isDefined) Json.toJson(UserResponse(userOption.get, baseCities)) else Json.obj("error" -> "getUserInfo error")
     }
   }
 }

@@ -8,7 +8,7 @@ import weatherApp.models.WeatherResponse
 import weatherApp.router.AppRouter
 
 object WeatherBox {
-  
+
   case class Props (
     weather: Option[WeatherResponse],
     ctl: RouterCtl[AppRouter.Page]
@@ -17,7 +17,8 @@ object WeatherBox {
     if (props.weather.isDefined) {
       val weather = props.weather.get
       val iconStr = s"wi-owm-${weather.weather.head.id}"
-      props.ctl.link(AppRouter.CityRoute(weather.name.toLowerCase(), weather.id))(
+      val link: TagMod = props.ctl.link(AppRouter.CityRoute(weather.name.toLowerCase(), weather.id))
+      <.div(
         ^.cls := "weather-box",
         ^.maxWidth := "400px",
         ^.display := "flex",
@@ -58,7 +59,7 @@ object WeatherBox {
               ^.display := "flex",
               ^.justifyContent := "center",
               ^.alignItems := "center",
-              WeatherBoxBtn.Component()
+              WeatherBoxBtn.Component(WeatherBoxBtn.Props(link))
             )
           )
         )

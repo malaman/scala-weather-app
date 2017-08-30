@@ -45,3 +45,10 @@ case class WeatherResponse (
   sys: Sys,
   name: String
 )
+
+case class OpenWeatherBaseCity (
+                                 id: Int,
+                                 name: String,
+                                 lon: Float,
+                                 lat: Float,
+                               )

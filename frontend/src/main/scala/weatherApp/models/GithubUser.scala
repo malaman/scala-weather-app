@@ -7,3 +7,8 @@ case class GithubUser(
                        html_url: String,
                        name: String
                      )
+
+case class UserResponse (
+                          user: GithubUser,
+                          cities: Seq[OpenWeatherBaseCity]
+                        )

@@ -1,7 +1,6 @@
 package models
 
 import play.api.libs.json._
-import java.util.Date
 
 case class GithubUser(
                        login: String,
@@ -27,7 +26,7 @@ object GithubToken {
 
 case class UserResponse (
                           user: GithubUser,
-                          cities: Seq[OpenWeatherCitySlick]
+                          cities: Seq[OpenWeatherBaseCity]
                         )
 
 object UserResponse {

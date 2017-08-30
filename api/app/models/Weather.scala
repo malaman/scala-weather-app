@@ -86,3 +86,14 @@ case class FindWeatherResponse (
 object FindWeatherResponse {
   implicit val f = Json.format[FindWeatherResponse]
 }
+
+case class OpenWeatherBaseCity (
+                                 id: Int,
+                                 name: String,
+                                 lon: Float,
+                                 lat: Float
+                               )
+
+object OpenWeatherBaseCity {
+  implicit val f = Json.format[OpenWeatherBaseCity]
+}
