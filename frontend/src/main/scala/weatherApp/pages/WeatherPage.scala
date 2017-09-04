@@ -10,13 +10,10 @@ import scala.concurrent.Future
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
 import japgolly.scalajs.react.extra.router.RouterCtl
-
 import io.circe.generic.auto._
 import io.circe.parser.decode
-
 import diode.react.ModelProxy
 import diode.Action
-
 import weatherApp.models.WeatherResponse
 import weatherApp.components.{Select, WeatherBox}
 import weatherApp.config.Config
@@ -30,17 +27,17 @@ object WeatherPage {
   def throttle: js.Dynamic = _throttle.asInstanceOf[js.Dynamic]
 
   case class Props (
-    proxy: ModelProxy[AppState],
-    ctl: RouterCtl[AppRouter.Page]
-  )
+                     proxy: ModelProxy[AppState],
+                     ctl: RouterCtl[AppRouter.Page]
+                   )
 
   case class State(
-    var isLoading: Boolean,
-    var inputValue: String,
-    var weatherData: List[WeatherResponse],
-    var selectOptions: List[Select.Options],
-    var selectedWeather: Option[WeatherResponse]
-  )
+                    var isLoading: Boolean,
+                    var inputValue: String,
+                    var weatherData: List[WeatherResponse],
+                    var selectOptions: List[Select.Options],
+                    var selectedWeather: Option[WeatherResponse]
+                  )
 
   class Backend($: BackendScope[Props, State]) {
 
@@ -57,11 +54,7 @@ object WeatherPage {
 
     def loadWeatherInfo(city: String): Callback = {
       val host = Config.AppConfig.apiHost
-      val setLoading = $.modState(s => {
-        s.isLoading = true
-        s
-      })
-
+      val setLoading = $.modState(s => s.copy(isLoading = true))
       val getData = CallbackTo[Future[List[WeatherResponse]]] {
         dom.ext.Ajax.get(url=s"$host/weather?city=$city").map(xhr => {
           val option = decode[List[WeatherResponse]](xhr.responseText)
@@ -78,14 +71,13 @@ object WeatherPage {
 
       val updateState = (weatherData: Future[List[WeatherResponse]]) => Callback {
         weatherData.map(weather => {
-            dispatch(GetWeatherSuggestions(weather)).runNow()
-              $.modState(s => {
-                s.isLoading = false
-                s.weatherData = weather
-                s.selectOptions = getSelectOptions(weather, s.inputValue)
-                s
-              }).runNow()
-          })
+          dispatch(GetWeatherSuggestions(weather)).runNow()
+          $.modState(s => s.copy(
+            isLoading =  false,
+            weatherData = weather,
+            selectOptions = getSelectOptions(weather, s.inputValue))
+          ).runNow()
+        })
       }
 
       setLoading >> getData >>= updateState
@@ -108,10 +100,7 @@ object WeatherPage {
       } catch {
         case e: Exception => None : Option[String]
       }
-      $.modState(s => {
-        s.inputValue = selectedValue.getOrElse("")
-        s
-      }).runNow()
+      $.modState(s => s.copy(inputValue = selectedValue.getOrElse(""))).runNow()
       Callback {
         throttleInput()
       }.runNow()
@@ -142,6 +131,7 @@ object WeatherPage {
     def render(p: Props, s: State) = {
       val proxy = p.proxy()
       val weatherData = proxy.weatherSuggestions
+      val user = proxy.user
       val select = Select(
         "form-field-name",
         s.selectOptions.toJSArray,
@@ -158,11 +148,11 @@ object WeatherPage {
           "Enter city to get weather: "
         ),
         <.div(
-            ^.marginBottom := 10.px,
-            select
+          ^.marginBottom := 10.px,
+          select
         ),
         <.div(
-          WeatherBox.Component(WeatherBox.Props(s.selectedWeather, p.ctl))
+          WeatherBox.Component(WeatherBox.Props(s.selectedWeather, p.ctl, user))
         )
       )
     }

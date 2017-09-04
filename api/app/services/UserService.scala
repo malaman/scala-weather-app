@@ -7,12 +7,12 @@ import scala.util.Properties
 import play.api.libs.json.Json
 import play.api.libs.ws._
 import play.api.libs.json.JsValue
-import models.{GithubToken, GithubUser, OpenWeatherBaseCity, UserResponse}
+import models.{GithubToken, GithubUser, OpenWeatherBaseCity, UserResponse, CityForUser}
 import play.api.{Configuration, Environment, Mode}
 import dao.{GithubUserDAO, UserCityDAO}
 
 @Singleton
-class AuthService (
+class UserService(
                     ws: WSClient,
                     env: Environment,
                     configuration: Configuration,
@@ -77,5 +77,12 @@ class AuthService (
       val baseCities = cities.map(city => OpenWeatherBaseCity(city.id, city.name, city.lon, city.lat))
       if (userOption.isDefined) Json.toJson(UserResponse(userOption.get, baseCities)) else Json.obj("error" -> "getUserInfo error")
     }
+  }
+  def upsertCityForUser(jsValueOption: Option[JsValue]): Future[Int] = {
+    if (jsValueOption.isDefined) {
+      val cityForUser = jsValueOption.get.as[CityForUser]
+      return userCityDAO.upsertCityForUser(cityForUser)
+    }
+    Future(-1)
   }
 }

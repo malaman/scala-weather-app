@@ -4,14 +4,15 @@ import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
 import japgolly.scalajs.react.extra.router.RouterCtl
 
-import weatherApp.models.WeatherResponse
+import weatherApp.models.{WeatherResponse, GithubUser, OpenWeatherBaseCity}
 import weatherApp.router.AppRouter
 
 object WeatherBox {
 
   case class Props (
     weather: Option[WeatherResponse],
-    ctl: RouterCtl[AppRouter.Page]
+    ctl: RouterCtl[AppRouter.Page],
+    user: Option[GithubUser]
   )
   val Component = ScalaFnComponent[Props](props => {
     if (props.weather.isDefined) {
@@ -50,6 +51,9 @@ object WeatherBox {
             <.div(
               weather.weather.head.main
             )
+          ),
+          <.div(
+
           ),
           <.div(
             ^.display := "flex",

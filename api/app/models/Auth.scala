@@ -32,3 +32,12 @@ case class UserResponse (
 object UserResponse {
   implicit val f = Json.format[UserResponse]
 }
+
+case class CityForUser (
+                       city: OpenWeatherBaseCity,
+                       userId: Int
+                       )
+
+object CityForUser {
+  implicit val f = Json.format[CityForUser]
+}

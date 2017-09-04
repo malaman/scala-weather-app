@@ -6,24 +6,24 @@ import scala.concurrent._
 import javax.inject.{Inject, Singleton}
 
 import play.api.{Environment, Mode, Configuration}
-import services.AuthService
+import services.UserService
 
 @Singleton
-class AuthController @Inject() (
+class UserController @Inject()(
                                  cc: ControllerComponents,
-                                 authService: AuthService,
+                                 userService: UserService,
                                  env: Environment,
                                  configuration: Configuration
                                )(implicit ec: ExecutionContext) extends AbstractController(cc) {
 
   def authenticate() = Action { implicit request =>
-    Redirect(s"https://github.com/login/oauth/authorize?scope=user:email&client_id=${authService.GITHUB_CLIENT_ID}&redirect_uri=${authService.PROD_HOST}/api/callback&response_type=code")
+    Redirect(s"https://github.com/login/oauth/authorize?scope=user:email&client_id=${userService.GITHUB_CLIENT_ID}&redirect_uri=${userService.PROD_HOST}/api/callback&response_type=code")
   }
 
   def callback() = Action.async { implicit request =>
     val code = request.getQueryString("code").mkString
-    authService.postCode(code).map {token =>
-      Redirect(authService.HOST).withSession("access_token" -> token)
+    userService.postCode(code).map {token =>
+      Redirect(userService.HOST).withSession("access_token" -> token)
     }
   }
 
@@ -31,7 +31,7 @@ class AuthController @Inject() (
     val tokenOption: Option[String] = request.session.get("access_token").map {token => token}
     if (tokenOption.isDefined) {
       val token = tokenOption.get
-      authService.getUserInfo(token).map { resp =>
+      userService.getUserInfo(token).map { resp =>
         Ok(resp).withSession("access_token" -> token)
       }
     } else {
@@ -40,6 +40,13 @@ class AuthController @Inject() (
   }
 
   def logout() = Action {implicit request =>
-    Redirect(authService.HOST).withNewSession
+    Redirect(userService.HOST).withNewSession
+  }
+
+  def upsertCityForUser() = Action.async { implicit request =>
+    val json  = request.body.asJson
+    userService.upsertCityForUser(json).map {resp =>
+      Ok(s"{resp: $resp}")
+    }
   }
 }

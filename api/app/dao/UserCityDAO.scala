@@ -5,7 +5,7 @@ import javax.inject.{Inject, Singleton}
 
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
-import models.{OpenWeatherCitySlick, UserCitySlick}
+import models.{CityForUser, OpenWeatherCitySlick, UserCitySlick}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -53,20 +53,25 @@ class UserCityDAO @Inject() (
 
   def upsert(userId: Int, cityId: Int): Future[Int] = {
     get(userId, cityId).flatMap(userCityOption => {
-      val newUserCity = UserCitySlick(userId, cityId, new Date())
-      val userCity = userCityOption.getOrElse(newUserCity).copy(updated = Some(new Date()))
-      db.run(UsersCities.insertOrUpdate(userCity))
-        .recover { case ex: Throwable =>
-          println("Error occured when updating user_city table", ex)
-          -1
-        }
+      if (userCityOption.isEmpty) {
+        val userCity = UserCitySlick(userId, cityId, new Date())
+        db.run(UsersCities.insertOrUpdate(userCity))
+          .recover { case ex: Throwable =>
+            println("Error occured when updating user_city table", ex)
+            -1
+          }
+      } else {
+        Future(1)
+      }
     })
   }
 
-  def upsertCityForUser(city: OpenWeatherCitySlick, userId: Int): Future[Int] = {
+  def upsertCityForUser(cityForUser: CityForUser): Future[Int] = {
+    val city = cityForUser.city
+    val cityToUpsert = OpenWeatherCitySlick(id=city.id, name=city.name, lon=city.lon, lat=city.lat, created = new Date())
     for {
-      _ <- cityDAO.upsert(city)
-      result <- upsert(userId, city.id)
+      _ <- cityDAO.upsert(cityToUpsert)
+      result <- upsert(cityForUser.userId, city.id)
     } yield result
   }
 

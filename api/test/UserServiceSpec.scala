@@ -1,4 +1,4 @@
-import services.AuthService
+import services.UserService
 import dao.{GithubUserDAO, OpenWeatherCityDAO, UserCityDAO}
 import org.scalatestplus.play._
 import play.core.server.Server
@@ -14,7 +14,7 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.inject.guice._
 import org.scalatest.BeforeAndAfterAll
 
-class AuthServiceSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting  with BeforeAndAfterAll {
+class UserServiceSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting  with BeforeAndAfterAll {
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
@@ -47,13 +47,13 @@ class AuthServiceSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting  
       , 5.seconds)
   }
 
-  "AuthServiceSpec" should {
+  "UserServiceSpec" should {
     "return return an access_token via postCode method call" in {
       Server.withRouter() {
         case POST(p"/login/oauth/access_token") => ActionMocks.getGithubTokenResponse()
       } { implicit port =>
         WsTestClient.withClient { client =>
-          val authService = new AuthService(client, app.environment, app.configuration, userDAO, userCityDAO, "", "")
+          val authService = new UserService(client, app.environment, app.configuration, userDAO, userCityDAO, "", "")
           val result = Await.result(authService.postCode("1234"), 10.seconds)
           result must be ("12345551233123a")
         }
@@ -65,7 +65,7 @@ class AuthServiceSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting  
         case GET(p"/user") => ActionMocks.getGithubUserResponse()
       } { implicit port =>
         WsTestClient.withClient { client =>
-          val authService = new AuthService(client, app.environment, app.configuration, userDAO, userCityDAO, "", "")
+          val authService = new UserService(client, app.environment, app.configuration, userDAO, userCityDAO, "", "")
           val resp = Await.result(authService.getUserInfo("1234"), 10.seconds)
           val jsresp = resp.validate[UserResponse]
           jsresp.fold(

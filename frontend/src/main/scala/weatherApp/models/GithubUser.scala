@@ -12,3 +12,10 @@ case class UserResponse (
                           user: GithubUser,
                           cities: Seq[OpenWeatherBaseCity]
                         )
+
+case class CityForUser (
+                         city: OpenWeatherBaseCity,
+                         userId: Int
+                       )
+
+
