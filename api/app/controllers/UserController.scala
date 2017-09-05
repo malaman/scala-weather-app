@@ -49,4 +49,11 @@ class UserController @Inject()(
       Ok(s"{resp: $resp}")
     }
   }
+
+  def deleteCityForUser() = Action.async { implicit request =>
+    val json  = request.body.asJson
+    userService.deleteCityForUser(json).map {resp =>
+      Ok(s"{resp: $resp}")
+    }
+  }
 }

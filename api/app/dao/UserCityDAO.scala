@@ -75,4 +75,14 @@ class UserCityDAO @Inject() (
     } yield result
   }
 
+  def deleteCityForUser(cityForUser: CityForUser): Future[Int] = {
+    val cityId = cityForUser.city.id
+    val userId = cityForUser.userId
+    val query = UsersCities.filter(userCity => userCity.cityId === cityId && userCity.userId === userId).delete
+    db.run(query)
+      .recover { case ex: Throwable =>
+        println("Error occured when updating user_city table", ex)
+        -1
+      }
+  }
 }

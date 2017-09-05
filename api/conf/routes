@@ -4,17 +4,18 @@
 
 
 #Add custom API
-GET   /weather              controllers.WeatherController.getWeatherForCity()
-GET   /single-weather       controllers.WeatherController.getSingleWeatherForCity()
+GET     /weather              controllers.WeatherController.getWeatherForCity()
+GET     /single-weather       controllers.WeatherController.getSingleWeatherForCity()
 
-GET   /forecast             controllers.WeatherForecastController.getForecastForCity()
-GET   /raw-forecast         controllers.WeatherForecastController.getRawForecastForCity()             
+GET     /forecast             controllers.WeatherForecastController.getForecastForCity()
+GET     /raw-forecast         controllers.WeatherForecastController.getRawForecastForCity()
 
-GET   /callback             controllers.UserController.callback()
-GET   /user-info            controllers.UserController.getUserInfo()
-GET   /authenticate         controllers.UserController.authenticate()
-GET   /logout               controllers.UserController.logout()
-POST  /add-user             controllers.UserController.upsertCityForUser()
+GET     /callback             controllers.UserController.callback()
+GET     /user-info            controllers.UserController.getUserInfo()
+GET     /authenticate         controllers.UserController.authenticate()
+GET     /logout               controllers.UserController.logout()
+POST    /city                 controllers.UserController.upsertCityForUser()
+DELETE  /city                 controllers.UserController.deleteCityForUser()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

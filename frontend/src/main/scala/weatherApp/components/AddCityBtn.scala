@@ -22,7 +22,12 @@ object AddCityBtn {
     def addCityForUser(city: OpenWeatherBaseCity, userId: Int): Callback = {
       val cityForUser = CityForUser(city, userId).asJson.asInstanceOf[dom.ext.Ajax.InputData]
       Callback {
-        dom.ext.Ajax.get(url = s"$host/weather?city=$city", cityForUser)
+        dom.ext.Ajax.post(
+          url = s"$host/city",
+          data = cityForUser,
+          headers = Map("Content-Type" -> "application/json"),
+          withCredentials=true
+        )
       }
     }
 
@@ -30,7 +35,7 @@ object AddCityBtn {
     def render(props: Props): VdomElement =
       <.div(
         <.button(
-          ^.cls := "weather-box-btn",
+          ^.cls := "button",
           ^.marginLeft := 5.px,
           ^.border := "none",
           ^.cursor := "pointer",
@@ -38,10 +43,12 @@ object AddCityBtn {
           ^.padding := "5px 10px",
           ^.borderRadius := "2px",
           ^.onClick --> addCityForUser(props.city, props.userId),
-          "Add to favorites"
+          "save"
         )
       )
   }
+
+  def apply(props: Props) = Component(props)
 
   val Component = ScalaComponent.builder[Props]("AddCityBtn")
     .renderBackend[Backend].build

@@ -1,3 +1,5 @@
+$hover-color: #3c8ed2;
+
 body {
   font-family: 'Roboto';
 }
@@ -12,4 +14,10 @@ a {
   &:active {
     color: black;
   }
+}
+
+.button {
+    &:hover {
+      background-color: $hover-color;
+    }
 }

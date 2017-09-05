@@ -81,8 +81,18 @@ class UserService(
   def upsertCityForUser(jsValueOption: Option[JsValue]): Future[Int] = {
     if (jsValueOption.isDefined) {
       val cityForUser = jsValueOption.get.as[CityForUser]
+      println("cityForUser add: ", cityForUser)
       return userCityDAO.upsertCityForUser(cityForUser)
     }
     Future(-1)
   }
+
+  def deleteCityForUser(jsValueOption: Option[JsValue]): Future[Int] = {
+    if (jsValueOption.isDefined) {
+      val cityForUser = jsValueOption.get.as[CityForUser]
+      return userCityDAO.deleteCityForUser(cityForUser)
+    }
+    Future(-1)
+  }
+
 }

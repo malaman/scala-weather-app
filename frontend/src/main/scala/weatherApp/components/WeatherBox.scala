@@ -17,8 +17,15 @@ object WeatherBox {
   val Component = ScalaFnComponent[Props](props => {
     if (props.weather.isDefined) {
       val weather = props.weather.get
+      val userOption = props.user
       val iconStr = s"wi-owm-${weather.weather.head.id}"
       val link: TagMod = props.ctl.link(AppRouter.CityRoute(weather.name.toLowerCase(), weather.id))
+      val city = OpenWeatherBaseCity(
+        id = weather.id,
+        name = weather.name,
+        lat = weather.coord.lat,
+        lon = weather.coord.lon
+      )
       <.div(
         ^.cls := "weather-box",
         ^.maxWidth := "400px",
@@ -59,12 +66,16 @@ object WeatherBox {
             ^.display := "flex",
             ^.flexDirection := "row",
             ^.justifyContent := "center",
+            ^.alignItems := "center",
             <.div(
               ^.display := "flex",
               ^.justifyContent := "center",
               ^.alignItems := "center",
               WeatherBoxBtn.Component(WeatherBoxBtn.Props(link))
-            )
+            ),
+            <.div(
+              AddCityBtn(AddCityBtn.Props(city, userOption.get.id))
+            ).when(userOption.isDefined)
           )
         )
       )

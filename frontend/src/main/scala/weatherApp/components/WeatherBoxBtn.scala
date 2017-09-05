@@ -9,7 +9,7 @@ object WeatherBoxBtn {
     <.div(
       props.link(
         <.button(
-          ^.cls := "weather-box-btn",
+          ^.cls := "button",
           ^.marginLeft := 5.px,
           ^.border := "none",
           ^.cursor := "pointer",
