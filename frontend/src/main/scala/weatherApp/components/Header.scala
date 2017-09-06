@@ -18,31 +18,25 @@ object Header {
   val Component = ScalaFnComponent[Props](props => {
     val proxy = props.proxy()
     val userInfo = proxy.userInfo
-    val getProfileBtns = () => {
-      if (proxy.userInfo.isDefined) {
+    <.div(
+      ^.display := "flex",
+      ^.justifyContent := "space-between",
+      HeaderNav(HeaderNav.Props(props.proxy, props.ctl)),
+      proxy.userInfo.map(userInfo =>
         <.div(
           ^.display := "flex",
           ^.justifyContent := "flex-end",
           HeaderUserLink(
-            HeaderUserLink.Props(proxy.userInfo.get)
+            HeaderUserLink.Props(userInfo)
           ),
           HeaderBtn(
             HeaderBtn.Props(text = "Logout", url = s"${Config.AppConfig.apiHost}/logout")
           )
         )
-      } else {
-        <.div(
-          HeaderBtn(
-            HeaderBtn.Props(text = "Login with Github", url = s"${Config.AppConfig.apiHost}/authenticate", isLogin = true)
-          ).when(!proxy.isLoading)
-        )
-      }
-    }
-    <.div(
-      ^.display := "flex",
-      ^.justifyContent := "space-between",
-      HeaderNav(HeaderNav.Props(props.proxy, props.ctl)),
-      getProfileBtns()
+      ).whenDefined,
+      HeaderBtn(
+        HeaderBtn.Props(text = "Login with Github", url = s"${Config.AppConfig.apiHost}/authenticate", isLogin = true)
+      ).when(!proxy.isLoading && proxy.userInfo.isEmpty)
     )
   })
 

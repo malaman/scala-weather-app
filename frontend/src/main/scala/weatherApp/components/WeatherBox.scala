@@ -72,9 +72,7 @@ object WeatherBox {
               ^.alignItems := "center",
               WeatherBoxBtn(WeatherBoxBtn.Props(link))
             ),
-            <.div(
-              AddCityBtn(AddCityBtn.Props(city, userInfoOption.get.user.id))
-            ).when(userInfoOption.isDefined)
+            userInfoOption.map(userInfo => AddCityBtn(AddCityBtn.Props(city, userInfo.user.id))).whenDefined,
           )
         )
       )
