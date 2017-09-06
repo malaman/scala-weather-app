@@ -21,7 +21,7 @@ object HeaderBtn {
       ^.display := "flex",
       ^.justifyContent := "flex-end",
       <.a(
-        ^.cls := "header-btn",
+        ^.cls := "secondary-hover",
         ^.display := "flex",
         ^.justifyContent := "center",
         ^.alignItems := "center",

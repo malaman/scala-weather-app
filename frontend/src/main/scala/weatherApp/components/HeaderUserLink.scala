@@ -2,13 +2,13 @@ package weatherApp.components
 
 import japgolly.scalajs.react.ScalaFnComponent
 import japgolly.scalajs.react.vdom.html_<^._
-import weatherApp.models.GithubUser
+import weatherApp.models.{GithubUser, UserResponse}
 
 object HeaderUserLink {
-  case class Props(user: GithubUser)
+  case class Props(userInfo: UserResponse)
 
   val Component = ScalaFnComponent[Props](props => {
-    val user = props.user
+    val user = props.userInfo.user
     <.div(
       ^.display := "flex",
       ^.justifyContent := "flex-end",

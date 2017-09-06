@@ -34,7 +34,7 @@ object Layout {
             val option = decode[UserResponse](xhr.responseText)
             option match {
               case Left(failure) => None
-              case Right(data) => AppCircuit.dispatch(GetUserInfo(Some(data.user)))
+              case Right(data) => AppCircuit.dispatch(GetUserInfo(Some(data)))
             }
             AppCircuit.dispatch(ClearLoadingState())
           }
@@ -45,7 +45,7 @@ object Layout {
       <.div(
         <.div(
           ^.cls := "container",
-          connection(proxy => Header(Header.Props(proxy)))
+          connection(proxy => Header(Header.Props(proxy, props.ctl, props.resolution)))
         ),
         <.div(^.cls := "container", props.resolution.render()),
         connection(proxy => LoadingIndicator(LoadingIndicator.Props(proxy)))

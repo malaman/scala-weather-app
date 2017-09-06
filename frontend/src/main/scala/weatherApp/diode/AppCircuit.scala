@@ -2,7 +2,7 @@ package weatherApp.diode
 
 import diode._
 import diode.react.ReactConnector
-import weatherApp.models.{GithubUser, WeatherForecastResponse, WeatherResponse}
+import weatherApp.models.{UserResponse, WeatherForecastResponse, WeatherResponse}
 
 object AppCircuit extends Circuit[AppModel] with ReactConnector[AppModel] {
   def initialModel = AppModel(
@@ -11,7 +11,7 @@ object AppCircuit extends Circuit[AppModel] with ReactConnector[AppModel] {
       forecast = None: Option[WeatherForecastResponse],
       selectedWeather = None: Option[WeatherResponse],
       isLoading = false,
-      user = None : Option[GithubUser]
+      userInfo = None : Option[UserResponse]
     )
   )
 
@@ -34,6 +34,6 @@ class AppHandler[M](modelRW: ModelRW[M, AppState]) extends ActionHandler(modelRW
   override def handle = {
     case SetLoadingState() => updated(value.copy(isLoading = true))
     case ClearLoadingState() => updated(value.copy(isLoading = false))
-    case GetUserInfo(user) => updated(value.copy(user = user))
+    case GetUserInfo(userInfo) => updated(value.copy(userInfo = userInfo))
   }
 }

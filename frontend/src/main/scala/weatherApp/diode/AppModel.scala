@@ -1,14 +1,14 @@
 package weatherApp.diode
 
 import diode.Action
-import weatherApp.models.{GithubUser, WeatherForecastResponse, WeatherResponse}
+import weatherApp.models.{GithubUser, UserResponse, WeatherForecastResponse, WeatherResponse}
 
 case class AppState (
   weatherSuggestions: List[WeatherResponse],
   forecast: Option[WeatherForecastResponse],
   selectedWeather: Option[WeatherResponse],
   isLoading: Boolean,
-  user: Option[GithubUser]
+  userInfo: Option[UserResponse]
 )
 
 case class AppModel(
@@ -27,4 +27,4 @@ case class SetLoadingState() extends Action
 
 case class ClearLoadingState() extends Action
 
-case class GetUserInfo(user: Option[GithubUser]) extends Action
+case class GetUserInfo(userInfo: Option[UserResponse]) extends Action

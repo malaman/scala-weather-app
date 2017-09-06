@@ -131,7 +131,7 @@ object WeatherPage {
     def render(p: Props, s: State) = {
       val proxy = p.proxy()
       val weatherData = proxy.weatherSuggestions
-      val user = proxy.user
+      val userInfo = proxy.userInfo
       val select = Select(
         "form-field-name",
         s.selectOptions.toJSArray,
@@ -152,7 +152,7 @@ object WeatherPage {
           select
         ),
         <.div(
-          WeatherBox.Component(WeatherBox.Props(s.selectedWeather, p.ctl, user))
+          WeatherBox.Component(WeatherBox.Props(s.selectedWeather, p.ctl, userInfo))
         )
       )
     }

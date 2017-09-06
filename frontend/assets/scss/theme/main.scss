@@ -1,4 +1,5 @@
 $hover-color: #3c8ed2;
+$white: white;
 
 body {
   font-family: 'Roboto';
@@ -16,8 +17,16 @@ a {
   }
 }
 
-.button {
+.primary-hover {
     &:hover {
       background-color: $hover-color;
     }
 }
+
+.secondary-hover {
+    &:hover {
+      background-color: $hover-color;
+      color: $white;
+    }
+}
+

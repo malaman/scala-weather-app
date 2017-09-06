@@ -3,8 +3,7 @@ package weatherApp.components
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
 import japgolly.scalajs.react.extra.router.RouterCtl
-
-import weatherApp.models.{WeatherResponse, GithubUser, OpenWeatherBaseCity}
+import weatherApp.models.{OpenWeatherBaseCity, UserResponse, WeatherResponse}
 import weatherApp.router.AppRouter
 
 object WeatherBox {
@@ -12,12 +11,12 @@ object WeatherBox {
   case class Props (
     weather: Option[WeatherResponse],
     ctl: RouterCtl[AppRouter.Page],
-    user: Option[GithubUser]
+    userInfo: Option[UserResponse]
   )
   val Component = ScalaFnComponent[Props](props => {
     if (props.weather.isDefined) {
       val weather = props.weather.get
-      val userOption = props.user
+      val userInfoOption = props.userInfo
       val iconStr = s"wi-owm-${weather.weather.head.id}"
       val link: TagMod = props.ctl.link(AppRouter.CityRoute(weather.name.toLowerCase(), weather.id))
       val city = OpenWeatherBaseCity(
@@ -71,11 +70,11 @@ object WeatherBox {
               ^.display := "flex",
               ^.justifyContent := "center",
               ^.alignItems := "center",
-              WeatherBoxBtn.Component(WeatherBoxBtn.Props(link))
+              WeatherBoxBtn(WeatherBoxBtn.Props(link))
             ),
             <.div(
-              AddCityBtn(AddCityBtn.Props(city, userOption.get.id))
-            ).when(userOption.isDefined)
+              AddCityBtn(AddCityBtn.Props(city, userInfoOption.get.user.id))
+            ).when(userInfoOption.isDefined)
           )
         )
       )
