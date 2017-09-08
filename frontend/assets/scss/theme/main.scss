@@ -19,14 +19,14 @@ a {
 
 .primary-hover {
     &:hover {
-      background-color: $hover-color;
+      background-color: $hover-color !important;
     }
 }
 
 .secondary-hover {
     &:hover {
-      background-color: $hover-color;
-      color: $white;
+      background-color: $hover-color !important;
+      color: $white !important;
     }
 }
 
