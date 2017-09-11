@@ -16,8 +16,8 @@ class WeatherService (ws: WSClient, baseUrl: String)(implicit ec: ExecutionConte
 
   val API_KEY: String = Properties.envOrElse("WEATHER_API_KEY", "WEATHER_API_KEY")
 
-  def getWeather(city: String): Future[WSResponse] = {
-    val url = s"$baseUrl/data/2.5/weather?q=$city&appid=$API_KEY&units=metric"
+  def getWeatherForCityById(id: String): Future[WSResponse] = {
+    val url = s"$baseUrl/data/2.5/weather?id=$id&appid=$API_KEY&units=metric"
     ws.url(url).get()
   }
 

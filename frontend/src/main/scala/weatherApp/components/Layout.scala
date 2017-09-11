@@ -1,5 +1,6 @@
 package weatherApp.components
 
+import diode.react.ModelProxy
 import org.scalajs.dom
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -8,38 +9,62 @@ import japgolly.scalajs.react.extra.router.{Resolution, RouterCtl}
 import japgolly.scalajs.react.vdom.html_<^._
 import weatherApp.config.Config
 import weatherApp.diode.AppCircuit.connect
-import weatherApp.diode.{AppCircuit, ClearLoadingState, GetUserInfo, SetLoadingState}
-import weatherApp.models.UserResponse
+import weatherApp.diode._
+import weatherApp.models.{GithubUser, OpenWeatherBaseCity, UserResponse, WeatherResponse}
 import weatherApp.router.AppRouter.Page
 import io.circe.parser.decode
 import io.circe.generic.auto._
+
+import scala.concurrent.Future
 
 object Layout {
   val connection = connect(_.state)
 
   case class Props(
+                    proxy: ModelProxy[AppState],
                     ctl: RouterCtl[Page],
                     resolution: Resolution[Page]
                   )
 
-  class Backend($: BackendScope[Props, Unit]) {
+  class Backend(bs: BackendScope[Props, Unit]) {
+    val host: String = Config.AppConfig.apiHost
 
-    def mounted: Callback = {
-      val host: String = Config.AppConfig.apiHost
+    def getUserResponse = CallbackTo[Future[UserResponse]] {
       AppCircuit.dispatch(SetLoadingState())
-      Callback {
-        dom.ext.Ajax
-          .get(url=s"$host/user-info", withCredentials=true)
-          .map {xhr =>
-            val option = decode[UserResponse](xhr.responseText)
-            option match {
-              case Left(failure) => None
-              case Right(data) => AppCircuit.dispatch(GetUserInfo(Some(data)))
-            }
-            AppCircuit.dispatch(ClearLoadingState())
+      dom.ext.Ajax
+        .get(url=s"$host/user-info", withCredentials=true)
+        .map {xhr =>
+          val option = decode[UserResponse](xhr.responseText)
+          option match {
+            case Left(failure) => UserResponse(GithubUser(), List.empty[OpenWeatherBaseCity])
+            case Right(data) => data
           }
+        }
+    }
+
+    def dispatchUserInfo(userInfoFuture: Future[UserResponse]) = CallbackTo[Future[UserResponse]] {
+      userInfoFuture.map {userInfo =>
+        AppCircuit.dispatch(ClearLoadingState())
+        AppCircuit.dispatch(GetUserInfo(Some(userInfo)))
+        userInfo
       }
     }
+
+    def loadAndDispatchCitiesWeather(userInfoFuture: Future[UserResponse]) = Callback {
+      userInfoFuture.map { userInfo =>
+        userInfo.cities.map {city =>
+          dom.ext.Ajax.get(url=s"$host/weather-city?id=${city.id}").map {xhr =>
+            val option = decode[WeatherResponse](xhr.responseText)
+            option match {
+              case Left(_) => None
+              case Right(data) => AppCircuit.dispatch(GetWeatherForFavCity(data))
+            }
+          }
+        }
+      }
+    }
+
+    def mounted: Callback = getUserResponse >>= dispatchUserInfo >>= loadAndDispatchCitiesWeather
 
     def render(props: Props): VdomElement = {
       <.div(

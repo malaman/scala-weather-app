@@ -11,7 +11,8 @@ object AppCircuit extends Circuit[AppModel] with ReactConnector[AppModel] {
       forecast = None: Option[WeatherForecastResponse],
       selectedWeather = None: Option[WeatherResponse],
       isLoading = false,
-      userInfo = None : Option[UserResponse]
+      userInfo = None : Option[UserResponse],
+      favCitiesWeather = List.empty[WeatherResponse]
     )
   )
 
@@ -27,6 +28,7 @@ class WeatherPageHandler[M](modelRW: ModelRW[M, AppState]) extends ActionHandler
     case GetWeatherForecast(forecast) => updated(value.copy(forecast = forecast))
     case ClearForecast() => updated(value.copy(forecast = None))
     case SelectWeather(weather) => updated(value.copy(selectedWeather = weather))
+    case GetWeatherForFavCity(weather) => updated(value.copy(favCitiesWeather = value.favCitiesWeather ++ List(weather)))
   }
 }
 

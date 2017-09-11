@@ -37,7 +37,7 @@ object AppRouter {
     connection(proxy => FavoritesPage(FavoritesPage.Props(proxy, ctrl)))
   }
 
-  def layout (c: RouterCtl[Page], r: Resolution[Page]) = Layout(Layout.Props(c, r))
+  def layout (c: RouterCtl[Page], r: Resolution[Page]) = connection(proxy => Layout(Layout.Props(proxy, c, r)))
 
   val baseUrl = BaseUrl.fromWindowOrigin_/
 

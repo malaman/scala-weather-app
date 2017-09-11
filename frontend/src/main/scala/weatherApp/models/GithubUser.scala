@@ -1,11 +1,11 @@
 package weatherApp.models
 
 case class GithubUser(
-                       login: String,
-                       id: Int,
-                       avatar_url: String,
-                       html_url: String,
-                       name: String
+                       login: String = "",
+                       id: Int = -1,
+                       avatar_url: String = "",
+                       html_url: String = "",
+                       name: String = ""
                      )
 
 case class UserResponse (

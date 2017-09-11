@@ -1,21 +1,12 @@
 package weatherApp.pages
 
-import scala.scalajs.js
-import scala.concurrent.ExecutionContext.Implicits.global
-import org.scalajs.dom
-
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
 import japgolly.scalajs.react.extra.router.RouterCtl
 import diode.react.ModelProxy
-import io.circe.parser.decode
-import io.circe.generic.auto._
-
 import weatherApp.router.AppRouter
-import weatherApp.models.WeatherForecastResponse
 import weatherApp.diode._
-import weatherApp.components.{CityPageHeader, DailyForecastBox, GoogleMaps, MapMarker, WeatherForecastBox}
-import weatherApp.config.Config
+import weatherApp.components._
 
 object FavoritesPage {
   case class Props(
@@ -23,32 +14,20 @@ object FavoritesPage {
                     ctl: RouterCtl[AppRouter.Page]
                   )
 
-  class Backend($: BackendScope[Props, Unit]) {
+  class Backend(bs: BackendScope[Props, Unit]) {
 
-    private val props = $.props.runNow()
-
-    def getForecastBoxes(forecast: WeatherForecastResponse) = {
-      forecast.list.map(item =>
-        WeatherForecastBox.Component.withKey(item.dt)(
-          WeatherForecastBox.Props(item)
-        )
-      )
+    def getCities(props: Props) = {
+      val proxy = props.proxy()
+      proxy.favCitiesWeather.map {city =>
+        WeatherBox.Component.withKey(city.id)(WeatherBox.Props(Some(city), props.ctl, proxy.userInfo))
+      }
     }
 
-    def getDailyForecastBoxes(forecast: WeatherForecastResponse) = {
-      forecast.daily.map(item =>
-        DailyForecastBox.Component.withKey(item.day)(DailyForecastBox.Props(item))
-      )
-    }
-
-    def mounted: Callback = {
-      Callback.log("mounted")
-    }
+    def mounted: Callback = Callback.log("Mounted!")
 
     def render(props: Props): VdomElement = {
-      val proxy = props.proxy()
       return <.div(
-        "Favorites page"
+        getCities(props).toVdomArray
       )
     }
   }

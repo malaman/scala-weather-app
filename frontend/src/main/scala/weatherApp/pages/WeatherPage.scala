@@ -55,14 +55,12 @@ object WeatherPage {
     def loadWeatherInfo(city: String): Callback = {
       val host = Config.AppConfig.apiHost
       val setLoading = $.modState(s => s.copy(isLoading = true))
+
       val getData = CallbackTo[Future[List[WeatherResponse]]] {
         dom.ext.Ajax.get(url=s"$host/weather?city=$city").map(xhr => {
           val option = decode[List[WeatherResponse]](xhr.responseText)
           option match {
-            case Left(failure) => {
-              Callback.log(failure.toString())
-              List.empty[WeatherResponse]
-            }
+            case Left(failure) => List.empty[WeatherResponse]
             case Right(data) => data
           }
         })
@@ -152,7 +150,7 @@ object WeatherPage {
           select
         ),
         <.div(
-          WeatherBox.Component(WeatherBox.Props(s.selectedWeather, p.ctl, userInfo))
+          WeatherBox(WeatherBox.Props(s.selectedWeather, p.ctl, userInfo))
         )
       )
     }
