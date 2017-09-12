@@ -13,18 +13,19 @@ import japgolly.scalajs.react.extra.router.RouterCtl
 import io.circe.generic.auto._
 import io.circe.parser.decode
 import diode.react.ModelProxy
-import diode.Action
 import weatherApp.models.WeatherResponse
 import weatherApp.components.{Select, WeatherBox}
 import weatherApp.config.Config
 import weatherApp.router.AppRouter
 import weatherApp.diode.{AppState, GetWeatherSuggestions, SelectWeather}
+import weatherApp.diode.AppCircuit
 
 object WeatherPage {
   @js.native
   @JSImport("lodash.throttle", JSImport.Default)
   private object _throttle extends js.Any
   def throttle: js.Dynamic = _throttle.asInstanceOf[js.Dynamic]
+
 
   case class Props (
                      proxy: ModelProxy[AppState],
@@ -40,11 +41,6 @@ object WeatherPage {
                   )
 
   class Backend($: BackendScope[Props, State]) {
-
-    private val props = $.props.runNow()
-
-    private val dispatch: Action => Callback = props.proxy.dispatchCB
-
     def getSelectOptions(data: List[WeatherResponse], intputValue: String) = {
       data.zipWithIndex.map { case (item, index) => Select.Options(
         value = s"$intputValue::$index",
@@ -56,7 +52,7 @@ object WeatherPage {
       val host = Config.AppConfig.apiHost
       val setLoading = $.modState(s => s.copy(isLoading = true))
 
-      val getData = CallbackTo[Future[List[WeatherResponse]]] {
+      def getData(): Future[List[WeatherResponse]] = {
         dom.ext.Ajax.get(url=s"$host/weather?city=$city").map(xhr => {
           val option = decode[List[WeatherResponse]](xhr.responseText)
           option match {
@@ -66,31 +62,30 @@ object WeatherPage {
         })
       }
 
-
-      val updateState = (weatherData: Future[List[WeatherResponse]]) => Callback {
-        weatherData.map(weather => {
-          dispatch(GetWeatherSuggestions(weather)).runNow()
+      def updateState: Future[Callback] = {
+        getData().map {weather =>
+          AppCircuit.dispatch(GetWeatherSuggestions(weather))
           $.modState(s => s.copy(
             isLoading =  false,
             weatherData = weather,
             selectOptions = getSelectOptions(weather, s.inputValue))
-          ).runNow()
-        })
+          )
+        }
       }
 
-      setLoading >> getData >>= updateState
+      setLoading >> Callback.future(updateState)
     }
 
-    def throttleInputValueChange(): js.Dynamic = {
+    val throttleInputValueChange: js.Dynamic = {
       throttle(() => {
-        val city = $.state.runNow().inputValue
-        if (city.nonEmpty) {
-          loadWeatherInfo(city).runNow()
-        }
+        $.state.map { state =>
+          val city = state.inputValue
+          if (city.nonEmpty) {
+            loadWeatherInfo(city).runNow()
+          }
+        }.runNow()
       }, 400)
     }
-
-    val throttleInput = throttleInputValueChange()
 
     def onInputValueChange(value: String): Unit = {
       val selectedValue = try {
@@ -99,9 +94,7 @@ object WeatherPage {
         case e: Exception => None : Option[String]
       }
       $.modState(s => s.copy(inputValue = selectedValue.getOrElse(""))).runNow()
-      Callback {
-        throttleInput()
-      }.runNow()
+      throttleInputValueChange()
     }
 
     def onSelectChange(option: Select.Options) = {
@@ -121,7 +114,7 @@ object WeatherPage {
           val index = if (arr.length == 2) arr(1).toInt else -1
           s.selectedWeather = if (index == -1) None else Some(s.weatherData(index))
         }
-        dispatch(SelectWeather(s.selectedWeather)).runNow()
+        AppCircuit.dispatch(SelectWeather(s.selectedWeather))
         s
       }).runNow()
     }
@@ -150,7 +143,7 @@ object WeatherPage {
           select
         ),
         <.div(
-          WeatherBox(WeatherBox.Props(s.selectedWeather, p.ctl, userInfo))
+          WeatherBox(WeatherBox.Props(s.selectedWeather, p.ctl, userInfo, isSaveBtn = true))
         )
       )
     }

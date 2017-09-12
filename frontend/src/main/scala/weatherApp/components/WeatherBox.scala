@@ -1,5 +1,6 @@
 package weatherApp.components
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
 import japgolly.scalajs.react.extra.router.RouterCtl
@@ -9,6 +10,7 @@ import weatherApp.models.{CityForUser, OpenWeatherBaseCity, UserResponse, Weathe
 import weatherApp.router.AppRouter
 import io.circe.syntax._
 import io.circe.generic.auto._
+import weatherApp.diode.{AddCityToFavs, AppCircuit, RemoveCityFromFavs}
 
 object WeatherBox {
 
@@ -16,31 +18,32 @@ object WeatherBox {
     weather: Option[WeatherResponse],
     ctl: RouterCtl[AppRouter.Page],
     userInfo: Option[UserResponse],
-    isRemoveBtn: Boolean = false
+    isRemoveBtn: Boolean = false,
+    isSaveBtn: Boolean = false
   )
 
   class Backend(bs: BackendScope[Props, Unit]) {
     val host: String = Config.AppConfig.apiHost
 
-    def addCityForUser(city: OpenWeatherBaseCity, userId: Int): Callback = {
+    def addCityForUser(city: OpenWeatherBaseCity, userId: Int, weather: WeatherResponse): Callback = {
       val cityForUser = CityForUser(city, userId).asJson.asInstanceOf[dom.ext.Ajax.InputData]
       Callback {
         dom.ext.Ajax.post(
           url = s"$host/city",
           data = cityForUser,
           headers = Map("Content-Type" -> "application/json")
-        )
+        ).map(_ => AppCircuit.dispatch(AddCityToFavs(city, weather)))
       }
     }
 
-    def removeCityForUser(city: OpenWeatherBaseCity, userId: Int): Callback = {
+    def removeCityForUser(city: OpenWeatherBaseCity, userId: Int, weather: WeatherResponse): Callback = {
       val cityForUser = CityForUser(city, userId).asJson.asInstanceOf[dom.ext.Ajax.InputData]
       Callback {
         dom.ext.Ajax.delete(
           url = s"$host/city",
           data = cityForUser,
           headers = Map("Content-Type" -> "application/json")
-        )
+        ).map(_ => AppCircuit.dispatch(RemoveCityFromFavs(city, weather)))
       }
     }
 
@@ -109,10 +112,10 @@ object WeatherBox {
                 <.div(
                   ^.display := "flex",
                   WeatherBoxBtn(
-                    WeatherBoxBtn.Props("save", addCityForUser(city, userInfo.user.id))
-                  ),
+                    WeatherBoxBtn.Props("save", addCityForUser(city, userInfo.user.id, props.weather.get))
+                  ).when(props.isSaveBtn),
                   WeatherBoxBtn(
-                    WeatherBoxBtn.Props("remove", removeCityForUser(city, userInfo.user.id))
+                    WeatherBoxBtn.Props("remove", removeCityForUser(city, userInfo.user.id, props.weather.get))
                   ).when(props.isRemoveBtn)
                 )
               ).whenDefined

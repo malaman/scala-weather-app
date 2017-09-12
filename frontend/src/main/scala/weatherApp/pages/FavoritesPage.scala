@@ -19,14 +19,18 @@ object FavoritesPage {
     def getCities(props: Props) = {
       val proxy = props.proxy()
       proxy.favCitiesWeather.map {city =>
-        WeatherBox.Component.withKey(city.id)(WeatherBox.Props(Some(city), props.ctl, proxy.userInfo))
+        <.div(
+          ^.key := city.id,
+          ^.marginBottom := 10.px,
+          WeatherBox(WeatherBox.Props(Some(city), props.ctl, proxy.userInfo, isRemoveBtn = true))
+        )
       }
     }
 
     def mounted: Callback = Callback.log("Mounted!")
 
     def render(props: Props): VdomElement = {
-      return <.div(
+      <.div(
         getCities(props).toVdomArray
       )
     }

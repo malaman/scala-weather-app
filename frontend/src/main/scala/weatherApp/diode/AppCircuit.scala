@@ -29,6 +29,18 @@ class WeatherPageHandler[M](modelRW: ModelRW[M, AppState]) extends ActionHandler
     case ClearForecast() => updated(value.copy(forecast = None))
     case SelectWeather(weather) => updated(value.copy(selectedWeather = weather))
     case GetWeatherForFavCity(weather) => updated(value.copy(favCitiesWeather = value.favCitiesWeather ++ List(weather)))
+    case AddCityToFavs(city, weather) => {
+      updated(value.userInfo.fold(value) {userInfo =>
+        val newUserInfo = userInfo.copy(cities = userInfo.cities ++ List(city))
+        value.copy(userInfo = Some(newUserInfo), favCitiesWeather = value.favCitiesWeather ++ List(weather))
+      })
+    }
+    case RemoveCityFromFavs(city, weather) => {
+      updated(value.userInfo.fold(value) {userInfo =>
+        val newUserInfo = userInfo.copy(cities = userInfo.cities.filter(_.id != city.id))
+        value.copy(userInfo = Some(newUserInfo), favCitiesWeather = value.favCitiesWeather.filter(_.id != weather.id))
+      })
+    }
   }
 }
 

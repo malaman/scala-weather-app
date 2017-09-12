@@ -27,8 +27,6 @@ object CityPage {
 
   class Backend($: BackendScope[Props, Unit]) {
 
-    private val props = $.props.runNow()
-
     def getForecastBoxes(forecast: WeatherForecastResponse) = {
       forecast.list.map(item =>
         WeatherForecastBox.Component.withKey(item.dt)(
@@ -49,15 +47,17 @@ object CityPage {
         AppCircuit.dispatch(ClearForecast())
         AppCircuit.dispatch(SetLoadingState())
       } >>
-      Callback {
-        dom.ext.Ajax.get(url=s"$host/forecast?id=${props.id}").map(xhr => {
-          val option = decode[WeatherForecastResponse](xhr.responseText)
-          option match {
-            case Left(failure) => Callback.log(failure.toString()).runNow()
-            case Right(data) => AppCircuit.dispatch(GetWeatherForecast(Some(data)))
-          }
-          AppCircuit.dispatch(ClearLoadingState())
-        })
+      $.props.flatMap {props =>
+        Callback {
+          dom.ext.Ajax.get(url=s"$host/forecast?id=${props.id}").map(xhr => {
+            val option = decode[WeatherForecastResponse](xhr.responseText)
+            option match {
+              case Right(data) => AppCircuit.dispatch(GetWeatherForecast(Some(data)))
+              case Left(_) => None
+            }
+            AppCircuit.dispatch(ClearLoadingState())
+          })
+        }
       }
     }
 
