@@ -44,8 +44,9 @@ object Layout {
 
     def dispatchUserInfo(userInfoFuture: Future[UserResponse]) = CallbackTo[Future[UserResponse]] {
       userInfoFuture.map {userInfo =>
+        val userInfoOption = if (userInfo.user.id != -1) Some(userInfo) else None
         AppCircuit.dispatch(ClearLoadingState())
-        AppCircuit.dispatch(GetUserInfo(Some(userInfo)))
+        AppCircuit.dispatch(GetUserInfo(userInfoOption))
         userInfo
       }
     }
