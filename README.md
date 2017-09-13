@@ -1,54 +1,73 @@
 # Introduction
 
-The repository is a full stack application, which shows weather forecasts for selected city.
+Yet another weather application, based on Scala.js, scalajs-react and Playframework.
 
-## api
+Features:
+ - city search with autocomplete
+ - weather forecast is displayed for a selected city 
+ - authentication via Github OAuth
+ - saving city to favorites (for authenticated users) 
+ 
+# Demo 
 
-Tech stack:
- - Scala
- - Playframework
+[Demo](http://ec2-52-59-160-108.eu-central-1.compute.amazonaws.com/)
 
- Following external services are used:
-  - http://openweathermap.org/
-
- ## frontend
+# Frontend
 
 Tech stack:
  - [Scala.js](https://github.com/scala-js/scala-js)
  - [scalajs-react](https://github.com/japgolly/scalajs-react)
+ - [diode](https://github.com/suzaku-io/diode)
+ - [scalajs.dom](https://github.com/scala-js/scala-js-dom)
  - [circe](https://circe.github.io/circe/)
-
-# Setup
-
-## api (backend)
-
-
-1. Clone repository
-2. `cd api`
-3. `WEATHER_API_KEY=<YOUR_OPENWEATHERMAP_API_KEY> sbt run`.
-
- [http://openweathermap.org](http://openweathermap.org/) is required to start backend. It is also possible to use backend from demo application
-(http://ec2-52-59-160-108.eu-central-1.compute.amazonaws.com:9000)
-
-## frontend
+ 
+## Setup
 
 1. Clone repository
 2. `cd frontent`
 3. `yarn install`
 4. `sbt fastOptJS`
-5. `npm run start`
+5. `npm run start:frontend`
 6. Open in browser `http://localhost:8080`
 
-webpack-dev-server is used for serving frontend assets in dev enviroment.
+`npm run start:frontend` command uses `http://ec2-52-59-160-108.eu-central-1.compute.amazonaws.com/api` host to fetch data from API
 
-If you want to use backend from demo application (`http://ec2-52-59-160-108.eu-central-1.compute.amazonaws.com:9000`) change `API_HOST` env variable to for start task in `package.json`
 
-## Road map
+## JS packages
 
-- [x] Integrate scalajs-react router into the application (use separate route for weather in selected city)
+The project is using following JavaScript packages:
 
-- [x] Add diod [https://github.com/suzaku-io/diode](https://github.com/suzaku-io/diode) package to frontend project for store management
+- [react-select](https://github.com/JedWatson/react-select)
+- [google-map-reaact](https://github.com/istarkov/google-map-react)
+- [lodash-throttle](https://github.com/lodash/lodash)
 
-- [ ] Save selected cities in browsers localStorage
+Full list of JS dependencies is in `package.json`.
 
-- [ ] Add `slick` package to api project for saving user and selected cities information
+## Routing
+
+[react-select](https://github.com/JedWatson/react-select) is used for SPA routing.
+
+## State Management
+
+[diode](https://github.com/suzaku-io/diode) is used for managing application state.
+
+## XHR client
+
+XHR client of [scalajs.dom](https://github.com/scala-js/scala-js-dom) is used for XHR requests.
+[circe](https://github.com/circe/circe) is used for JSON encoding/decoding
+
+## Bundler 
+
+Webpack is used to bundle Scala.js generated javascript.
+SCSS/Images are bundled via webpack as well.
+
+# API
+
+Application backend is writted with following tech stack:
+ - Scala
+ - Playframework
+ - Slick
+
+ Following external services are used:
+  - http://openweathermap.org/
+  - Github OAuth  
