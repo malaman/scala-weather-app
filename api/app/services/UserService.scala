@@ -7,7 +7,7 @@ import scala.util.Properties
 import play.api.libs.json.Json
 import play.api.libs.ws._
 import play.api.libs.json.JsValue
-import models.{GithubToken, GithubUser, OpenWeatherBaseCity, UserResponse, CityForUser}
+import models._
 import play.api.{Configuration, Environment, Mode}
 import dao.{GithubUserDAO, UserCityDAO}
 
@@ -64,7 +64,12 @@ class UserService(
     .map { response =>
       val body = Json.parse(response.body)
       val jsresp = body.validate[GithubUser]
-      jsresp.fold(err => None, user => Some(user))
+      jsresp.fold(
+        err => {
+          println("Error: ", err)
+          None
+        },
+        user => Some(user))
     }
 
   def getUserInfo(token: String): Future[JsValue] = {
@@ -72,7 +77,10 @@ class UserService(
     for {
       userOption <- getInfoFromGithub(url)
       _ <- userDAO.upsert(userOption)
-      cities <- userCityDAO.getCitiesForUser(userOption.get.id) if userOption.isDefined
+      cities <- {
+        val user = userOption.fold(GithubUser())(user => user)
+        userCityDAO.getCitiesForUser(user.id)
+      }
     } yield {
       val baseCities = cities.map(city => OpenWeatherBaseCity(city.id, city.name, city.lon, city.lat))
       if (userOption.isDefined) Json.toJson(UserResponse(userOption.get, baseCities)) else Json.obj("error" -> "getUserInfo error")

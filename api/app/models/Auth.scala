@@ -3,11 +3,11 @@ package models
 import play.api.libs.json._
 
 case class GithubUser(
-                       login: String,
-                       id: Int,
-                       avatar_url: String,
-                       html_url: String,
-                       name: String
+                       login: String = "",
+                       id: Int = -1,
+                       avatar_url: String = "",
+                       html_url: String = "",
+                       name: Option[String] = None
                )
 
 object GithubUser {

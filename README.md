@@ -37,15 +37,15 @@ Tech stack:
 
 The project is using following JavaScript packages:
 
-- [react-select](https://github.com/JedWatson/react-select)
-- [google-map-reaact](https://github.com/istarkov/google-map-react)
+- [react-select](https://github.com/JedWatson/react-select) - [Link](https://github.com/malaman/scala-weather-app/blob/master/frontend/src/main/scala/weatherApp/components/Select.scala) to the JsFnComponent
+- [google-map-reaact](https://github.com/istarkov/google-map-react) - [Link](https://github.com/malaman/scala-weather-app/blob/master/frontend/src/main/scala/weatherApp/components/GoogleMaps.scala) to the JsFnComponent
 - [lodash-throttle](https://github.com/lodash/lodash)
 
-Full list of JS dependencies is in `package.json`.
+Full list of JS dependencies is in [package.json](https://github.com/malaman/scala-weather-app/blob/master/frontend/package.json).
 
 ## Routing
 
-[react-select](https://github.com/JedWatson/react-select) is used for SPA routing.
+[scalajs-react router](https://github.com/japgolly/scalajs-react/blob/master/doc/ROUTER.md) is used for SPA routing.
 
 ## State Management
 
@@ -58,7 +58,7 @@ XHR client of [scalajs.dom](https://github.com/scala-js/scala-js-dom) is used fo
 
 ## Bundler 
 
-Webpack is used to bundle Scala.js generated javascript.
+Webpack is used to bundle Scala.js generated javascript and npm dependencies.
 SCSS/Images are bundled via webpack as well.
 
 # API

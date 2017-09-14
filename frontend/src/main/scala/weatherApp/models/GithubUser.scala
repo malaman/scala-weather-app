@@ -5,7 +5,7 @@ case class GithubUser(
                        id: Int = -1,
                        avatar_url: String = "",
                        html_url: String = "",
-                       name: String = ""
+                       name: Option[String] = None
                      )
 
 case class UserResponse (

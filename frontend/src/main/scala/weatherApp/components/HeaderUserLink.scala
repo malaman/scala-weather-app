@@ -25,7 +25,7 @@ object HeaderUserLink {
           ^.src := user.avatar_url,
           ^.marginRight := 10.px
         ),
-        user.name
+        user.name.map(name => name).whenDefined
       )
     )
   })
