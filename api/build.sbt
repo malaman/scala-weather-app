@@ -1,4 +1,4 @@
-name := """play-scala"""
+name := """scala-weather-app-api"""
 
 version := "1.0-SNAPSHOT"
 
