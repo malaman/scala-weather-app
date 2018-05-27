@@ -8,10 +8,6 @@ Features:
  - authentication via Github OAuth
  - saving city to favorites (for authenticated users) 
  
-# Demo 
-
-[Demo](http://ec2-52-59-160-108.eu-central-1.compute.amazonaws.com/)
-
 # Frontend
 
 Tech stack:
@@ -21,17 +17,6 @@ Tech stack:
  - [scalajs.dom](https://github.com/scala-js/scala-js-dom)
  - [circe](https://circe.github.io/circe/)
  
-## Setup
-
-1. Clone repository
-2. `cd frontent`
-3. `yarn install`
-4. `sbt fastOptJS`
-5. `npm run start:frontend`
-6. Open in browser `http://localhost:8080`
-
-`npm run start:frontend` command uses `http://ec2-52-59-160-108.eu-central-1.compute.amazonaws.com/api` host to fetch data from API
-
 
 ## JS packages
 
